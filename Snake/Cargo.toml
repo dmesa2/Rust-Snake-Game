@@ -1,0 +1,9 @@
+[package]
+name = "Snake"
+version = "0.1.0"
+authors = ["dmesa2 <dmesa2@pdx.edu>, Kennedy Hahn, Harriet Adkins"]
+edition = "2018"
+
+[dependencies]
+rand = "0.3.18"
+piston_window = "0.74.0"
