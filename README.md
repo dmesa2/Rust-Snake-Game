@@ -1,8 +1,8 @@
 # Rust-Snake-Game
 
-##Implementation of the classic snake game written in Rust. 
+## Implementation of the classic snake game written in Rust. 
 
-##----------Below are the sources that we used in building this project----------
+## ----------Below are the sources that we used in building this project----------
 
 1.) https://www.youtube.com/watch?v=DnT_7M7L7vo
 2.) https://github.com/tensor-programming/snake-tutorial
@@ -10,7 +10,7 @@
 
 -------------------------------------------------------------------------------
 
-##We are using the open source rust code from tensor-programming to build off of. This open source code consists of:
+## We are using the open source rust code from tensor-programming to build off of. This open source code consists of:
 
         - A basic board block that the snake will play in
         - A basic snake built in blocks
