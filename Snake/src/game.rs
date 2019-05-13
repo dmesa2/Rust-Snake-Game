@@ -1,19 +1,19 @@
-use piston_window::*;
+use piston_window::*;//import all of piston 
 use piston_window::types::Color;
 
-use rand::{thread_rng, Rng};
+use rand::{thread_rng, Rng};//allows us to create thread local rand num seeded by the system
 
-use crate::snake::{Direction, Snake};
-use crate::draw::{draw_block, draw_rectangle};
+use crate::snake::{Direction, Snake};//bring in snake
+use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 
-const FOOD_COLOR: Color = [0.80, 0.00, 0.00, 1.0];
-const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0];
-const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];
+const FOOD_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
+const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0]; // Dark black border
+const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacity
 
-const MOVING_PERIOD: f64 = 0.1;
-const RESTART_TIME: f64 = 1.0;
+const MOVING_PERIOD: f64 = 0.1; //Snake's speed (FPS) -  We can adjust this 3 times for difficulty!
+const RESTART_TIME: f64 = 1.0; //Amount of time between failure state and next game (1 second)
 
-pub struct Game {
+pub struct Game {//Game struct
     snake: Snake,
 
     food_exists: bool,
@@ -27,26 +27,26 @@ pub struct Game {
     waiting_time: f64,
 }
 
-impl Game {
-    pub fn new(width: i32, height: i32) -> Game {
+impl Game {//implementation method for the struct game
+    pub fn new(width: i32, height: i32) -> Game {//instatiates new game
         Game {
-            snake: Snake::new(2, 2),
-            waiting_time: 0.0,
-            food_exists: true,
+            snake: Snake::new(2, 2),//snake starts at 2,2 (top left corner)
+            waiting_time: 0.0,//snake automatically starts moving
+            food_exists: true,//food will spawn at below x and y (6 and 4 coord)
             food_x: 6,
             food_y: 4,
-            width,
+            width, // size of board
             height,
-            game_over: false
+            game_over: false // when we hit wall this will be true
         }
     }
 
-    pub fn key_pressed(&mut self, key: Key) {
+    pub fn key_pressed(&mut self, key: Key) {//if game over then quit
         if self.game_over {
             return;
         }
 
-        let dir = match key {
+        let dir = match key {//if key up then go up and etc
             Key::Up => Some(Direction::Up),
             Key::Down => Some(Direction::Down),
             Key::Left => Some(Direction::Left),
@@ -54,73 +54,73 @@ impl Game {
             _ => Some(self.snake.head_direction())
         };
 
-        if dir.unwrap() == self.snake.head_direction().opposite() {
-            return;
+        if dir.unwrap() == self.snake.head_direction().opposite() {//if snake is moving up and we hit down
+            return;                                                 //nothing will happen
         }
 
         self.update_snake(dir);
     }
 
     pub fn draw(&self, con: &Context, g: &mut G2d) {
-        self.snake.draw(con, g);
+        self.snake.draw(con, g);//iterates through linked list
 
-        if self.food_exists {
+        if self.food_exists {//draw block
             draw_block(FOOD_COLOR, self.food_x, self.food_y, con, g);
         }
 
-        draw_rectangle(BORDER_COLOR, 0, 0, self.width, 1, con, g);
+        draw_rectangle(BORDER_COLOR, 0, 0, self.width, 1, con, g);//draws the borders
         draw_rectangle(BORDER_COLOR, 0, self.height - 1, self.width, 1, con, g);
         draw_rectangle(BORDER_COLOR, 0, 0, 1, self.height, con, g);
         draw_rectangle(BORDER_COLOR, self.width - 1, 0, 1, self.height, con, g);
 
-        if self.game_over {
+        if self.game_over {//if game over then draw game over screen (in this case it is entire screen)
             draw_rectangle(GAMEOVER_COLOR, 0, 0, self.width, self.height, con, g);
         }
     }
 
     pub fn update(&mut self, delta_time: f64) {
-        self.waiting_time += delta_time;
+        self.waiting_time += delta_time;//iterate waiting time
 
-        if self.game_over {
-            if self.waiting_time > RESTART_TIME {
+        if self.game_over {//if game over then 
+            if self.waiting_time > RESTART_TIME {//restart the game
                 self.restart();
             }
-            return;
+            return;//else return
         }
 
-        if !self.food_exists {
+        if !self.food_exists {//if food does not exist then add food
             self.add_food();
         }
 
-        if self.waiting_time > MOVING_PERIOD {
+        if self.waiting_time > MOVING_PERIOD {//update snake if this is true
             self.update_snake(None);
         }
     }
 
-    fn check_eating(&mut self) {
+    fn check_eating(&mut self) {//if snake is eating then 
         let (head_x, head_y): (i32, i32) = self.snake.head_position();
-        if self.food_exists && self.food_x == head_x && self.food_y == head_y {
-            self.food_exists = false;
-            self.snake.restore_tail();
+        if self.food_exists && self.food_x == head_x && self.food_y == head_y {//snake eats food
+            self.food_exists = false;//food doesn't exist anymore
+            self.snake.restore_tail();//our snake is going to grow one block
         }
     }
 
-    fn check_if_snake_alive(&self, dir: Option<Direction>) -> bool {
+    fn check_if_snake_alive(&self, dir: Option<Direction>) -> bool {//check if snake is alive
         let (next_x, next_y) = self.snake.next_head(dir);
 
-        if self.snake.overlap_tail(next_x, next_y) {
-            return false;
+        if self.snake.overlap_tail(next_x, next_y) {//if snake head overlaps with tail
+            return false;//return false
         }
 
-        next_x > 0 && next_y > 0 && next_x < self.width - 1 && next_y < self.height - 1
+        next_x > 0 && next_y > 0 && next_x < self.width - 1 && next_y < self.height - 1//if we go out of bounds
     }
 
-    fn add_food(&mut self) {
+    fn add_food(&mut self) {//adding food
         let mut rng = thread_rng();
 
         let mut new_x = rng.gen_range(1, self.width - 1);
         let mut new_y = rng.gen_range(1, self.height - 1);
-        while self.snake.overlap_tail(new_x, new_y) {
+        while self.snake.overlap_tail(new_x, new_y) {//we don't want snake to overlap with apple
             new_x = rng.gen_range(1, self.width - 1);
             new_y = rng.gen_range(1, self.height - 1);
         }
@@ -131,21 +131,21 @@ impl Game {
     }
 
     fn update_snake(&mut self, dir: Option<Direction>) {
-        if self.check_if_snake_alive(dir) {
-            self.snake.move_forward(dir);
-            self.check_eating();
+        if self.check_if_snake_alive(dir) {//if snake is alive
+            self.snake.move_forward(dir);//then move snake forward
+            self.check_eating();//if eating
         } else {
-            self.game_over = true;
+            self.game_over = true;//else game over
         }
-        self.waiting_time = 0.0;
+        self.waiting_time = 0.0;//reset waiting time and restart game
     }
 
-    fn restart(&mut self) {
-        self.snake = Snake::new(2, 2);
-        self.waiting_time = 0.0;
-        self.food_exists = true;
-        self.food_x = 6;
-        self.food_y = 4;
-        self.game_over = false;
+    fn restart(&mut self) {//this is similar to our new func but we don't want to call that because it will render a new window every reset
+        self.snake = Snake::new(2, 2);//new board game
+        self.waiting_time = 0.0;//start automatically
+        self.food_exists = true;//food is available immediately
+        self.food_x = 6;//food will start here
+        self.food_y = 4;//food will start here
+        self.game_over = false;//game over is false
     }
 }
