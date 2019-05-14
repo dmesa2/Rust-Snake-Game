@@ -13,6 +13,12 @@ const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red b
 const MOVING_PERIOD: f64 = 0.1; //Snake's speed (FPS) -  We can adjust this 3 times for difficulty!
 const RESTART_TIME: f64 = 1.0; //Amount of time between failure state and next game (1 second)
 
+#[derive(Copy, Clone, Hash, PartialEq, Eq)]
+pub enum SoundEffect {
+    Eat,
+    Die,
+}
+
 pub struct Game {//Game struct
     snake: Snake,
 
@@ -100,6 +106,7 @@ impl Game {//implementation method for the struct game
     fn check_eating(&mut self) {//if snake is eating then 
         let (head_x, head_y): (i32, i32) = self.snake.head_position();
         if self.food_exists && self.food_x == head_x && self.food_y == head_y {//snake eats food
+            music::play_sound(&SoundEffect::Eat, music::Repeat::Times(0), music::MAX_VOLUME);
             self.food_exists = false;//food doesn't exist anymore
             self.snake.restore_tail();//our snake is going to grow one block
         }
@@ -109,10 +116,16 @@ impl Game {//implementation method for the struct game
         let (next_x, next_y) = self.snake.next_head(dir);
 
         if self.snake.overlap_tail(next_x, next_y) {//if snake head overlaps with tail
+            music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;//return false
         }
 
-        next_x > 0 && next_y > 0 && next_x < self.width - 1 && next_y < self.height - 1//if we go out of bounds
+        let result = next_x > 0 && next_y > 0 && next_x < self.width - 1 && next_y < self.height - 1; //if we go out of bounds
+        if result == false {
+            music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
+            return false;
+        }
+        return true;
     }
 
     fn add_food(&mut self) {//adding food
@@ -133,7 +146,7 @@ impl Game {//implementation method for the struct game
     fn update_snake(&mut self, dir: Option<Direction>) {
         if self.check_if_snake_alive(dir) {//if snake is alive
             self.snake.move_forward(dir);//then move snake forward
-            self.check_eating();//if eating
+            self.check_eating(); //if snake ate an apple
         } else {
             self.game_over = true;//else game over
         }

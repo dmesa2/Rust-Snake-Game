@@ -8,6 +8,9 @@ Instructor: Professor Bart Massey
 1.) https://www.youtube.com/watch?v=DnT_7M7L7vo
 2.) https://github.com/tensor-programming/snake-tutorial
 3.) https://github.com/PistonDevelopers/piston
+4.) https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect)
+5.) https://www.youtube.com/watch?v=tUcaD3yiqEY (Java III Snake Theme Song)
+6.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)
 -------------------------------------------------------------------------------
 
 */
@@ -38,6 +41,7 @@ We are using the open source rust code from tensor-programming to build off of. 
 
 extern crate piston_window;
 extern crate rand;
+extern crate music;
 
 mod draw;//linking draw file
 mod snake;//linking snake file
@@ -49,8 +53,14 @@ use piston_window::types::Color;
 use game::Game;
 use draw::to_coord_u32;
 
+use crate::game::SoundEffect;
+
 const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
 
+#[derive(Copy, Clone, Hash, PartialEq, Eq)]
+enum BackgroundMusic {
+    ThemeSong,
+}
 
 
 fn main() {
@@ -63,17 +73,25 @@ fn main() {
             .unwrap();//deals with any errors that may come along
 
     let mut game = Game::new(width, height);//create a new game
-    while let Some(event) = window.next() {//cleans up window - every time snake moves window is cleaned
-        if let Some(Button::Keyboard(key)) = event.press_args() {//if button is pushed
-            game.key_pressed(key);//pass the key
-        }
-        window.draw_2d(&event, |c, g| {//else draw 2d window
-            clear(BACK_COLOR, g);//clear window
-            game.draw(&c, g);//draw game
-        });
+    music::start::<BackgroundMusic, SoundEffect, _>(16, || {
+        music::bind_music_file(BackgroundMusic::ThemeSong, "./sounds/theme.wav");
+        music::bind_sound_file(SoundEffect::Eat, "./sounds/eat.wav");
+        music::bind_sound_file(SoundEffect::Die, "./sounds/die.wav");
+        music::set_volume(music::MAX_VOLUME);
+        music::play_music(&BackgroundMusic::ThemeSong, music::Repeat::Forever);
 
-        event.update(|arg| {
-            game.update(arg.dt);//delta time in seconds and arg is just a piston window (library stuff)
-        });
-    }
+        while let Some(event) = window.next() {//cleans up window - every time snake moves window is cleaned
+            if let Some(Button::Keyboard(key)) = event.press_args() {//if button is pushed
+                game.key_pressed(key);//pass the key
+            }
+            window.draw_2d(&event, |c, g| {//else draw 2d window
+                clear(BACK_COLOR, g);//clear window
+                game.draw(&c, g);//draw game
+            });
+
+            event.update(|arg| {
+                game.update(arg.dt);//delta time in seconds and arg is just a piston window (library stuff)
+            });
+        }
+    });
 }
