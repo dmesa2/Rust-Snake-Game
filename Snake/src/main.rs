@@ -28,8 +28,11 @@ We are using the open source rust code from tensor-programming to build off of. 
         - Score tracking (Perhaps keep track or previous scores to compare against)
         - Pop up menu that will declare "Game Over" at the end with the score
         - Perhaps a congratualations pop up if the user gets the snake to a big enough size and the game can't go any further
+        - Menu at the end asking user to either Play Again or Quit
+        - Add other elements such as berries for double points for limited time and/or grapes to cut snake in half but keep score same
 
-        *Feel free to add more to this list!*
+        *
+        Feel free to add more to this list!*
 */
 
 
