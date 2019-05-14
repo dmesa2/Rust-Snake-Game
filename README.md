@@ -7,6 +7,9 @@
 1.) https://www.youtube.com/watch?v=DnT_7M7L7vo
 2.) https://github.com/tensor-programming/snake-tutorial
 3.) https://github.com/PistonDevelopers/piston
+4.) https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect)
+5.) https://www.youtube.com/watch?v=tUcaD3yiqEY (Java III Snake Theme Song)
+6.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)
 
 -------------------------------------------------------------------------------
 
