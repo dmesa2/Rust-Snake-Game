@@ -8,8 +8,10 @@
 2.) https://github.com/tensor-programming/snake-tutorial
 3.) https://github.com/PistonDevelopers/piston
 4.) https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect)
-5.) https://www.youtube.com/watch?v=tUcaD3yiqEY (Java III Snake Theme Song)
+5.) https://www.youtube.com/watch?v=nQV7DKBqGdk (Under the Sea Background Music)
 6.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)
+7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
+8.) https://rustacean.net (Main Menu Image)
 
 -------------------------------------------------------------------------------
 
