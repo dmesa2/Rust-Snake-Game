@@ -7,6 +7,11 @@
 1.) https://www.youtube.com/watch?v=DnT_7M7L7vo
 2.) https://github.com/tensor-programming/snake-tutorial
 3.) https://github.com/PistonDevelopers/piston
+4.) https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect)
+5.) https://www.youtube.com/watch?v=nQV7DKBqGdk (Under the Sea Background Music)
+6.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)
+7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
+8.) https://rustacean.net (Main Menu Image)
 
 -------------------------------------------------------------------------------
 
@@ -29,3 +34,5 @@
         - Add other elements such as berries for double points for limited time and/or grapes to cut snake in half but keep score same
 
         *Feel free to add more to this list!*
+
+## Some of the crates used in this project depend on sdl2 and sdl2 mixer to be installed locally, and the repository must be downloaded and run locally as well.
