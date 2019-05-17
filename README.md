@@ -36,3 +36,10 @@
         *Feel free to add more to this list!*
 
 ## Some of the crates used in this project depend on sdl2 and sdl2 mixer to be installed locally, and the repository must be downloaded and run locally as well.
+
+## Instructions
+
+	- Download the repository locally, and make sure sdl2 and sdl2_mixer are installed.
+        - cd into src
+        - type 'cargo run'
+        - Enjoy!

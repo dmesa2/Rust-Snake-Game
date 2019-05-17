@@ -89,10 +89,16 @@ fn main() {
 		Key::D1 => Some(0.17),
 		Key::D2 => Some(0.12),
 		Key::D3 => Some(0.05),
+                Key::NumPad1 => Some(0.17),
+                Key::NumPad2 => Some(0.12),
+                Key::NumPad3 => Some(0.05),
                 _ => Some(0.1),
 	    };
+            let result = level.unwrap();
             unsafe {
-                MOVING_PERIOD = level.unwrap();
+                if result > 0.0 {
+                    MOVING_PERIOD = result;
+                }
             }
             
 	    let (width, height) = (30, 30);
