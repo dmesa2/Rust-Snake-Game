@@ -34,3 +34,5 @@
         - Add other elements such as berries for double points for limited time and/or grapes to cut snake in half but keep score same
 
         *Feel free to add more to this list!*
+
+## Some of the crates used in this project depend on sdl2 and sdl2 mixer to be installed locally, and the repository must be downloaded and run locally as well.
