@@ -9,6 +9,7 @@ rand = "0.3.18"
 piston_window = "0.74.0"
 current = "0.1.2"
 piston-music = "0.25.1"
+find_folder = "*"
 
 [dependencies.sdl2]
 version = "0.32"

@@ -3,6 +3,7 @@ use piston_window::types::Color;
 
 use rand::{thread_rng, Rng};//allows us to create thread local rand num seeded by the system
 
+use crate::MOVING_PERIOD;
 use crate::snake::{Direction, Snake};//bring in snake
 use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 
@@ -10,7 +11,7 @@ const FOOD_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
 const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0]; // Dark black border
 const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacity
 
-const MOVING_PERIOD: f64 = 0.1; //Snake's speed (FPS) -  We can adjust this 3 times for difficulty!
+//const MOVING_PERIOD: f64 = 0.1; //Snake's speed (FPS) -  We can adjust this 3 times for difficulty!
 const RESTART_TIME: f64 = 1.0; //Amount of time between failure state and next game (1 second)
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
@@ -98,8 +99,10 @@ impl Game {//implementation method for the struct game
             self.add_food();
         }
 
-        if self.waiting_time > MOVING_PERIOD {//update snake if this is true
-            self.update_snake(None);
+        unsafe {
+            if self.waiting_time > MOVING_PERIOD {//update snake if this is true
+                self.update_snake(None);
+            }
         }
     }
 
