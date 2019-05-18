@@ -30,6 +30,9 @@ pub struct Game {//Game struct
     width: i32,
     height: i32,
 
+    obs_x: i32,
+    obs_y: i32,
+
     game_over: bool,
     waiting_time: f64,
 }
@@ -44,6 +47,8 @@ impl Game {//implementation method for the struct game
             food_y: 4,
             width, // size of board
             height,
+            obs_x: 25,
+            obs_y: 5,
             game_over: false // when we hit wall this will be true
         }
     }
@@ -74,6 +79,11 @@ impl Game {//implementation method for the struct game
         if self.food_exists {//draw block
             draw_block(FOOD_COLOR, self.food_x, self.food_y, con, g);
         }
+ 
+        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y, con, g);
+        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y, con, g);
+        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y+1, con, g);
+        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y+1, con, g);
 
         draw_rectangle(BORDER_COLOR, 0, 0, self.width, 1, con, g);//draws the borders
         draw_rectangle(BORDER_COLOR, 0, self.height - 1, self.width, 1, con, g);
@@ -123,6 +133,23 @@ impl Game {//implementation method for the struct game
             return false;//return false
         }
 
+        if self.snake.overlap_tail(self.obs_x, self.obs_y) {//if snake runs into obstacle
+            music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
+            return false;//return false
+        }
+        if self.snake.overlap_tail(self.obs_x+1, self.obs_y) {//if snake runs into obstacle
+            music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
+            return false;//return false
+        }
+        if self.snake.overlap_tail(self.obs_x, self.obs_y+1) {//if snake runs into obstacle
+            music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
+            return false;//return false
+        }
+        if self.snake.overlap_tail(self.obs_x+1, self.obs_y+1) {//if snake runs into obstacle
+            music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
+            return false;//return false
+        }
+
         let result = next_x > 0 && next_y > 0 && next_x < self.width - 1 && next_y < self.height - 1; //if we go out of bounds
         if result == false {
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
@@ -162,6 +189,8 @@ impl Game {//implementation method for the struct game
         self.food_exists = true;//food is available immediately
         self.food_x = 6;//food will start here
         self.food_y = 4;//food will start here
+        self.obs_x = 25;
+        self.obs_y = 5;
         self.game_over = false;//game over is false
     }
 }
