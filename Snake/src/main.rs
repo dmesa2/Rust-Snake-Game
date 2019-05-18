@@ -13,6 +13,7 @@ Instructor: Professor Bart Massey
 6.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)
 7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
 8.) https://rustacean.net (Main Menu Image)
+9.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs
 -------------------------------------------------------------------------------
 
 */
@@ -59,6 +60,8 @@ use draw::to_coord_u32;
 use crate::game::SoundEffect;
 
 const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
+const WHITE: Color = [1.0, 1.0, 1.0, 0.50];//white color
+
 static mut MOVING_PERIOD: f64 = 0.0;
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
@@ -110,6 +113,7 @@ fn main() {
 		    .unwrap();//deals with any errors that may come along
 
 	    let mut game = Game::new(width, height);//create a new game
+
 	    music::start::<BackgroundMusic, SoundEffect, _>(16, || {
 		music::bind_music_file(BackgroundMusic::ThemeSong, "./sounds/theme.wav");
 		music::bind_sound_file(SoundEffect::Eat, "./sounds/eat.wav");
@@ -117,13 +121,21 @@ fn main() {
 		music::set_volume(music::MAX_VOLUME);
 		music::play_music(&BackgroundMusic::ThemeSong, music::Repeat::Forever);
 
-		while let Some(event) = window.next() {//cleans up window - every time snake moves window is cleaned
+        while let Some(event) = window.next() {//cleans up window - every time snake moves window is cleaned
 		    if let Some(Button::Keyboard(key)) = event.press_args() {//if button is pushed
 			game.key_pressed(key);//pass the key
 		    }
 		    window.draw_2d(&event, |c, g| {//else draw 2d window
 			clear(BACK_COLOR, g);//clear window
 			game.draw(&c, g);//draw game
+
+            text::Text::new_color(WHITE, 30)//display score
+                .draw(
+                &format!("Score: {}", game.score),
+                &mut glyphs,
+                &c.draw_state,
+                c.transform.trans(540.0, 55.0),
+                g).unwrap(); 
 		    });
 
 		    event.update(|arg| {

@@ -33,6 +33,8 @@ pub struct Game {//Game struct
     obs_x: i32,
     obs_y: i32,
 
+    pub score: i32, // score for game
+
     game_over: bool,
     waiting_time: f64,
 }
@@ -49,9 +51,12 @@ impl Game {//implementation method for the struct game
             height,
             obs_x: 25,
             obs_y: 5,
+            score: 0, // score
             game_over: false // when we hit wall this will be true
         }
     }
+
+
 
     pub fn key_pressed(&mut self, key: Key) {//if game over then quit
         if self.game_over {
@@ -95,6 +100,10 @@ impl Game {//implementation method for the struct game
         }
     }
 
+    fn count_up_score(&mut self, points: i32) {
+        self.score += points;
+    }
+
     pub fn update(&mut self, delta_time: f64) {
         self.waiting_time += delta_time;//iterate waiting time
 
@@ -122,6 +131,7 @@ impl Game {//implementation method for the struct game
             music::play_sound(&SoundEffect::Eat, music::Repeat::Times(0), music::MAX_VOLUME);
             self.food_exists = false;//food doesn't exist anymore
             self.snake.restore_tail();//our snake is going to grow one block
+             self.count_up_score(1); //add 1 to score
         }
     }
 

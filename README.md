@@ -39,7 +39,7 @@
 
 ## Instructions
 
-        1. Download the repository locally, and make sure sdl2 and sdl2_mixer are installed.
+        1. Download the repository locally, and make sure sdl2 and sdl2_mixer are installed. (We used brew install sdl2 and brew install sdl2_mixer)
         2. cd into src
-        3. type 'cargo run'
+        3. type 'cargo check' followed by 'cargo run'
         4. Enjoy!
