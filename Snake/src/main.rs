@@ -59,6 +59,9 @@ use draw::to_coord_u32;
 use crate::game::SoundEffect;
 
 const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
+const BEACH_THEME: Color = [0.0, 0.0, 0.5, 1.0];
+const DUNGEON_THEME: Color = [0.5, 0.5, 0.5, 1.0];
+const FIELD_THEME: Color = [0.0, 0.9, 0.0, 0.8];
 static mut MOVING_PERIOD: f64 = 0.0;
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
@@ -80,11 +83,12 @@ fn main() {
             clear([1.0,1.0,1.0,1.0], g);
             image(&background_image, c.transform.scale(0.625,0.6), g);
             text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("THE SNAKE GAME (RUST CS410P VERSION)",&mut glyphs,&c.draw_state,c.transform.trans(10.0,100.0),g).unwrap();
-            text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("Press 1 to play level EASY",&mut glyphs,&c.draw_state,c.transform.trans(20.0,200.0),g).unwrap();
-            text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("Press 2 to play level MEDIUM",&mut glyphs,&c.draw_state,c.transform.trans(20.0,300.0),g).unwrap();
-            text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("Press 3 to play level DIFFICULT",&mut glyphs,&c.draw_state,c.transform.trans(20.0,400.0),g).unwrap();
+            text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 1 to play level EASY at the BEACH",&mut glyphs,&c.draw_state,c.transform.trans(20.0,200.0),g).unwrap();
+            text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 2 to play level MEDIUM in a FIELD",&mut glyphs,&c.draw_state,c.transform.trans(20.0,300.0),g).unwrap();
+            text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 3 to play level DIFFICULT in a DUNGEON",&mut glyphs,&c.draw_state,c.transform.trans(20.0,400.0),g).unwrap();
+
         });
-        if let Some(Button::Keyboard(number)) = e.press_args() {
+           if let Some(Button::Keyboard(number)) = e.press_args() {
 	   let level = match number {
 		Key::D1 => Some(0.17),
 		Key::D2 => Some(0.12),
@@ -94,15 +98,24 @@ fn main() {
                 Key::NumPad3 => Some(0.05),
                 _ => Some(0.1),
 	    };
-            let result = level.unwrap();
+	   let theme = match number {
+		Key::D1 => BEACH_THEME,
+		Key::D2 => FIELD_THEME,
+		Key::D3 => DUNGEON_THEME,
+                Key::NumPad1 => BEACH_THEME,
+                Key::NumPad2 => FIELD_THEME,
+                Key::NumPad3 => DUNGEON_THEME,
+                _ => BEACH_THEME,
+	    };
+            let level_result = level.unwrap();
             unsafe {
-                if result > 0.0 {
-                    MOVING_PERIOD = result;
+                if level_result > 0.0 {
+                    MOVING_PERIOD = level_result;
                 }
             }
             
 	    let (width, height) = (30, 30);
-
+   
 	    let mut window: PistonWindow =
 		WindowSettings::new("Snake", [to_coord_u32(width), to_coord_u32(height)])//creates a new window
 		    .exit_on_esc(true)//if we hit esc key then we will exit the game
@@ -110,8 +123,15 @@ fn main() {
 		    .unwrap();//deals with any errors that may come along
 
 	    let mut game = Game::new(width, height);//create a new game
-	    music::start::<BackgroundMusic, SoundEffect, _>(16, || {
-		music::bind_music_file(BackgroundMusic::ThemeSong, "./sounds/theme.wav");
+          
+            let theme_song = match theme {
+                BEACH_THEME => "./sounds/beach_theme.wav",
+		DUNGEON_THEME => "./sounds/dungeon_theme.wav",
+                FIELD_THEME => "./sounds/field_theme.wav",
+                _ => "./sounds/beach_theme.wav",
+             };     
+	        music::start::<BackgroundMusic, SoundEffect, _>(16, || {
+		music::bind_music_file(BackgroundMusic::ThemeSong, theme_song);
 		music::bind_sound_file(SoundEffect::Eat, "./sounds/eat.wav");
 		music::bind_sound_file(SoundEffect::Die, "./sounds/die.wav");
 		music::set_volume(music::MAX_VOLUME);
@@ -122,7 +142,7 @@ fn main() {
 			game.key_pressed(key);//pass the key
 		    }
 		    window.draw_2d(&event, |c, g| {//else draw 2d window
-			clear(BACK_COLOR, g);//clear window
+			clear(theme, g);//clear window
 			game.draw(&c, g);//draw game
 		    });
 
@@ -130,8 +150,10 @@ fn main() {
 			game.update(arg.dt);//delta time in seconds and arg is just a piston window (library stuff)
 		    });
 		}
-	    });
+        });
+            
         }
-    }
-
+        }
+    
 }
+
