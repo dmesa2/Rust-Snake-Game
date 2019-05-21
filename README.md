@@ -12,6 +12,7 @@
 6.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)
 7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
 8.) https://rustacean.net (Main Menu Image)
+9.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
 
 -------------------------------------------------------------------------------
 
@@ -31,8 +32,15 @@
         - Pop up menu that will declare "Game Over" at the end with the score
         - Perhaps a congratualations pop up if the user gets the snake to a big enough size and the game can't go any further
         - Menu at the end asking user to either Play Again or Quit
-        - Add other elements such as berries for double points for limited time and/or grapes to cut snake in half but keep score same
+        - Add other elements such as berries for double points for limited time and oranges to cut snake's body in half (excluding head and tail) but keep score same (snake will not go below length 2)
 
         *Feel free to add more to this list!*
 
 ## Some of the crates used in this project depend on sdl2 and sdl2 mixer to be installed locally, and the repository must be downloaded and run locally as well.
+
+## Instructions
+
+        1. Download the repository locally, and make sure sdl2 and sdl2_mixer are installed. (We used brew install sdl2 and brew install sdl2_mixer)
+        2. cd into src
+        3. type 'cargo check' followed by 'cargo run'
+        4. Enjoy!
