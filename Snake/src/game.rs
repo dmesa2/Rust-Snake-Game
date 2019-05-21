@@ -10,7 +10,8 @@ use crate::MOVING_PERIOD;
 use crate::snake::{Direction, Snake};//bring in snake
 use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 
-const FOOD_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
+const APPLE_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
+const BERRY_COLOR: Color = [0.80, 0.00, 0.80, 1.0]; // 80% red, 80% blue with 100% opacity
 const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0]; // Dark black border
 const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacit
 const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//white color
@@ -31,6 +32,7 @@ pub struct Game {//Game struct
     food_exists: bool,
     food_x: i32,
     food_y: i32,
+    food_type: String, //Apple or Berry
 
     width: i32,
     height: i32,
@@ -52,6 +54,7 @@ impl Game {//implementation method for the struct game
             food_exists: true,//food will spawn at below x and y (6 and 4 coord)
             food_x: 6,
             food_y: 4,
+            food_type: "apple".to_string(),
             width, // size of board
             height,
             obs_x: 25,
@@ -87,7 +90,12 @@ impl Game {//implementation method for the struct game
         self.snake.draw(con, g);//iterates through linked list
 
         if self.food_exists {//draw block
-            draw_block(FOOD_COLOR, self.food_x, self.food_y, con, g);
+            if self.food_type == "apple".to_string() {
+                draw_block(APPLE_COLOR, self.food_x, self.food_y, con, g);
+            }
+            else if self.food_type == "berry".to_string() {
+                draw_block(BERRY_COLOR, self.food_x, self.food_y, con, g);
+            }
         }
  
         draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y, con, g);
@@ -137,7 +145,12 @@ impl Game {//implementation method for the struct game
             music::play_sound(&SoundEffect::Eat, music::Repeat::Times(0), music::MAX_VOLUME);
             self.food_exists = false;//food doesn't exist anymore
             self.snake.restore_tail();//our snake is going to grow one block
-             self.count_up_score(1); //add 1 to score
+            if self.food_type == "apple".to_string() {
+                self.count_up_score(1); //add 1 to score
+            }
+            else if self.food_type == "berry".to_string() {
+                self.count_up_score(2); //add 2 to score
+            }
         }
     }
 
@@ -187,6 +200,13 @@ impl Game {//implementation method for the struct game
         self.food_x = new_x;
         self.food_y = new_y;
         self.food_exists = true;
+        let temp_type = rng.gen_range(1,3);
+        if temp_type == 1 {
+            self.food_type = "apple".to_string();
+        }
+        else if temp_type == 2 {
+            self.food_type = "berry".to_string();
+        }
     }
 
     fn update_snake(&mut self, dir: Option<Direction>) {
@@ -213,7 +233,7 @@ impl Game {//implementation method for the struct game
                     &mut glyphs,
                     &c.draw_state,
                     c.transform.trans(93.0, 150.0),
-                    g);
+                    g).unwrap();
 
                     text::Text::new_color(RED, 20)
                     .draw(
@@ -221,7 +241,7 @@ impl Game {//implementation method for the struct game
                     &mut glyphs,
                     &c.draw_state,
                     c.transform.trans(60.0, 200.0),
-                    g);
+                    g).unwrap();
                 });
             }
             self.game_over = true;//else game over
@@ -235,6 +255,7 @@ impl Game {//implementation method for the struct game
         self.food_exists = true;//food is available immediately
         self.food_x = 6;//food will start here
         self.food_y = 4;//food will start here
+        self.food_type = "apple".to_string();
         self.obs_x = 25;
         self.obs_y = 5;
         self.game_over = false;//game over is false
