@@ -1,3 +1,6 @@
+extern crate piston_window;
+extern crate find_folder;
+
 use piston_window::*;//import all of piston 
 use piston_window::types::Color;
 
@@ -9,7 +12,9 @@ use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 
 const FOOD_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
 const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0]; // Dark black border
-const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacity
+const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacit
+const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//white color
+const RED: Color = [1.0, 0.0, 0.0, 1.0];
 
 //const MOVING_PERIOD: f64 = 0.1; //Snake's speed (FPS) -  We can adjust this 3 times for difficulty!
 const RESTART_TIME: f64 = 1.0; //Amount of time between failure state and next game (1 second)
@@ -185,10 +190,40 @@ impl Game {//implementation method for the struct game
     }
 
     fn update_snake(&mut self, dir: Option<Direction>) {
+
         if self.check_if_snake_alive(dir) {//if snake is alive
             self.snake.move_forward(dir);//then move snake forward
             self.check_eating(); //if snake ate an apple
         } else {
+            let mut window: PistonWindow =
+            WindowSettings::new("Game Over!", [375; 2])
+            .build().unwrap();
+            let assets = find_folder::Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
+            let ref font = assets.join("FiraSans-Regular.ttf");
+            let factory = window.factory.clone();
+            let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
+
+            while let Some(e) = window.next() {
+                window.draw_2d(&e, |c, g| {
+                    clear([0.5, 0.5, 0.5, 1.0], g);
+
+                    text::Text::new_color(BLACK, 25)
+                    .draw(
+                    &format!("Your score is: {}", self.score),
+                    &mut glyphs,
+                    &c.draw_state,
+                    c.transform.trans(93.0, 150.0),
+                    g);
+
+                    text::Text::new_color(RED, 20)
+                    .draw(
+                    &format!("Click the top-left button"),
+                    &mut glyphs,
+                    &c.draw_state,
+                    c.transform.trans(60.0, 200.0),
+                    g);
+                });
+            }
             self.game_over = true;//else game over
         }
         self.waiting_time = 0.0;//reset waiting time and restart game
