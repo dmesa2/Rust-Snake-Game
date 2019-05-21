@@ -126,6 +126,13 @@ impl Snake {//implementing Snake
         self.body.push_back(blk);//push clone tail into back of body - so if we eat apple this method will be run
     }
 
+    pub fn cut_in_half(&mut self) {//Cut snake length in half after eating orange
+        let new_length = self.body.len()/2;
+        for _i in 0..new_length {
+            self.body.pop_back().unwrap();
+        }
+    }
+
     pub fn overlap_tail(&self, x: i32, y: i32) -> bool {//This will check if tail overlaps and if so it will fail
         let mut ch = 0;
         for block in &self.body {//iterate through body

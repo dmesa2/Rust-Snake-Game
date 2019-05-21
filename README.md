@@ -32,7 +32,7 @@
         - Pop up menu that will declare "Game Over" at the end with the score
         - Perhaps a congratualations pop up if the user gets the snake to a big enough size and the game can't go any further
         - Menu at the end asking user to either Play Again or Quit
-        - Add other elements such as berries for double points for limited time and/or grapes to cut snake in half but keep score same
+        - Add other elements such as berries for double points for limited time and oranges to cut snake's body in half (excluding head and tail) but keep score same (snake will not go below length 2)
 
         *Feel free to add more to this list!*
 

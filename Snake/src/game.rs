@@ -12,6 +12,7 @@ use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 
 const APPLE_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
 const BERRY_COLOR: Color = [0.80, 0.00, 0.80, 1.0]; // 80% red, 80% blue with 100% opacity
+const ORANGE_COLOR: Color = [0.80, 0.50, 0.00, 1.0];
 const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0]; // Dark black border
 const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacit
 const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//white color
@@ -96,6 +97,9 @@ impl Game {//implementation method for the struct game
             else if self.food_type == "berry".to_string() {
                 draw_block(BERRY_COLOR, self.food_x, self.food_y, con, g);
             }
+            else if self.food_type == "orange".to_string() {
+                draw_block(ORANGE_COLOR, self.food_x, self.food_y, con, g);
+            }
         }
  
         draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y, con, g);
@@ -151,6 +155,9 @@ impl Game {//implementation method for the struct game
             else if self.food_type == "berry".to_string() {
                 self.count_up_score(2); //add 2 to score
             }
+            else if self.food_type == "orange".to_string() {
+                self.snake.cut_in_half();
+            }
         }
     }
 
@@ -200,12 +207,15 @@ impl Game {//implementation method for the struct game
         self.food_x = new_x;
         self.food_y = new_y;
         self.food_exists = true;
-        let temp_type = rng.gen_range(1,3);
+        let temp_type = rng.gen_range(1,4);
         if temp_type == 1 {
             self.food_type = "apple".to_string();
         }
         else if temp_type == 2 {
             self.food_type = "berry".to_string();
+        }
+        else if temp_type == 3 {
+            self.food_type = "orange".to_string();
         }
     }
 
@@ -213,7 +223,7 @@ impl Game {//implementation method for the struct game
 
         if self.check_if_snake_alive(dir) {//if snake is alive
             self.snake.move_forward(dir);//then move snake forward
-            self.check_eating(); //if snake ate an apple
+            self.check_eating(); //if snake ate a fruit
         } else {
             let mut window: PistonWindow =
             WindowSettings::new("Game Over!", [375; 2])
