@@ -109,6 +109,7 @@ impl Game {//implementation method for the struct game
 
         if self.game_over {//if game over then 
             if self.waiting_time > RESTART_TIME {//restart the game
+
                 self.restart();
             }
             return;//else return
@@ -202,5 +203,6 @@ impl Game {//implementation method for the struct game
         self.obs_x = 25;
         self.obs_y = 5;
         self.game_over = false;//game over is false
+        self.score = 0; // reset score to 0
     }
 }

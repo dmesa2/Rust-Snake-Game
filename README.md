@@ -12,6 +12,7 @@
 6.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)
 7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
 8.) https://rustacean.net (Main Menu Image)
+9.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
 
 -------------------------------------------------------------------------------
 

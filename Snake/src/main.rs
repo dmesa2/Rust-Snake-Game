@@ -6,14 +6,14 @@ Instructor: Professor Bart Massey
 
 ----------Below are the sources that we used in building this project----------
 1.) https://www.youtube.com/watch?v=DnT_7M7L7vo
-2.) https://github.com/tensor-programming/snake-tutorial
+2.) https://github.com/tensor-programming/snake-tutorial (open source code with basic snake functionality)
 3.) https://github.com/PistonDevelopers/piston
 4.) https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect)
 5.) https://www.youtube.com/watch?v=nQV7DKBqGdk (Under the Sea Background Music)
 6.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)
 7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
 8.) https://rustacean.net (Main Menu Image)
-9.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs
+9.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
 -------------------------------------------------------------------------------
 
 */
@@ -122,6 +122,7 @@ fn main() {
 		music::play_music(&BackgroundMusic::ThemeSong, music::Repeat::Forever);
 
         while let Some(event) = window.next() {//cleans up window - every time snake moves window is cleaned
+
 		    if let Some(Button::Keyboard(key)) = event.press_args() {//if button is pushed
 			game.key_pressed(key);//pass the key
 		    }
