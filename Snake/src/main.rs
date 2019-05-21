@@ -41,6 +41,7 @@ We are using the open source rust code from tensor-programming to build off of. 
         Feel free to add more to this list!*
 */
 
+#![allow(non_snake_case)]
 
 extern crate piston_window;
 extern crate rand;
