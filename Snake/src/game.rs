@@ -10,6 +10,7 @@ use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 const FOOD_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
 const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0]; // Dark black border
 const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacity
+const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
 
 //const MOVING_PERIOD: f64 = 0.1; //Snake's speed (FPS) -  We can adjust this 3 times for difficulty!
 const RESTART_TIME: f64 = 1.0; //Amount of time between failure state and next game (1 second)
@@ -22,6 +23,8 @@ pub enum SoundEffect {
 
 pub struct Game {//Game struct
     snake: Snake,
+
+    theme: Color,
 
     food_exists: bool,
     food_x: i32,
@@ -38,7 +41,7 @@ pub struct Game {//Game struct
 }
 
 impl Game {//implementation method for the struct game
-    pub fn new(width: i32, height: i32) -> Game {//instatiates new game
+    pub fn new(width: i32, height: i32, theme: Color) -> Game {//instatiates new game
         Game {
             snake: Snake::new(2, 2),//snake starts at 2,2 (top left corner)
             waiting_time: 0.0,//snake automatically starts moving
@@ -47,6 +50,7 @@ impl Game {//implementation method for the struct game
             food_y: 4,
             width, // size of board
             height,
+            theme,
             obs_x: 25,
             obs_y: 5,
             game_over: false // when we hit wall this will be true
@@ -74,6 +78,7 @@ impl Game {//implementation method for the struct game
     }
 
     pub fn draw(&self, con: &Context, g: &mut G2d) {
+        draw_rectangle(self.theme, 0, 0, self.width, self.height, con, g);
         self.snake.draw(con, g);//iterates through linked list
 
         if self.food_exists {//draw block
@@ -89,6 +94,7 @@ impl Game {//implementation method for the struct game
         draw_rectangle(BORDER_COLOR, 0, self.height - 1, self.width, 1, con, g);
         draw_rectangle(BORDER_COLOR, 0, 0, 1, self.height, con, g);
         draw_rectangle(BORDER_COLOR, self.width - 1, 0, 1, self.height, con, g);
+
 
         if self.game_over {//if game over then draw game over screen (in this case it is entire screen)
             draw_rectangle(GAMEOVER_COLOR, 0, 0, self.width, self.height, con, g);
@@ -192,5 +198,6 @@ impl Game {//implementation method for the struct game
         self.obs_x = 25;
         self.obs_y = 5;
         self.game_over = false;//game over is false
+//        self.theme = theme;
     }
 }
