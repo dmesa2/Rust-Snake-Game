@@ -160,12 +160,18 @@ fn main() {
 
 fn launch_game(theme: Color) {
 	    let (width, height) = (30, 30);
-   
+
+
 	    let mut window: PistonWindow =
 		WindowSettings::new("Snake", [to_coord_u32(width), to_coord_u32(height)])//creates a new window
 		    .exit_on_esc(true)//if we hit esc key then we will exit the game
 		    .build()
 		    .unwrap();//deals with any errors that may come along
+	    let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
+	    let ref font = assets.join("Roboto-Regular.ttf");
+	    let factory2 = window.factory.clone();
+	    let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
+   
 	        let mut game = Game::new(theme, width, height);//create a new game
           
 	        music::start::<BackgroundMusic, SoundEffect, _>(16, || {
@@ -184,7 +190,16 @@ fn launch_game(theme: Color) {
 		    window.draw_2d(&event, |c, g| {//else draw 2d window
 			    clear(theme, g);//clear window
 			game.draw(&c, g);//draw game
-		    });
+
+		    text::Text::new_color(WHITE, 30)//display score
+			.draw(
+			&format!("Score: {}", game.score),
+			&mut glyphs,
+			&c.draw_state,
+			c.transform.trans(540.0, 55.0),
+			g).unwrap(); 
+			    });
+
 
 		    event.update(|arg| {
 			game.update(arg.dt);//delta time in seconds and arg is just a piston window (library stuff)
