@@ -198,6 +198,6 @@ impl Game {//implementation method for the struct game
         self.obs_x = 25;
         self.obs_y = 5;
         self.game_over = false;//game over is false
-//        self.theme = theme;
+        self.theme = theme;
     }
 }
