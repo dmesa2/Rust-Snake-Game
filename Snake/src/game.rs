@@ -30,6 +30,7 @@ pub enum SoundEffect {
 pub struct Game {//Game struct
     snake: Snake,
 
+    theme: Color,
     food_exists: bool,
     food_x: i32,
     food_y: i32,
@@ -48,10 +49,11 @@ pub struct Game {//Game struct
 }
 
 impl Game {//implementation method for the struct game
-    pub fn new(width: i32, height: i32) -> Game {//instatiates new game
+    pub fn new(theme: Color, width: i32, height: i32) -> Game {//instatiates new game
         Game {
             snake: Snake::new(2, 2),//snake starts at 2,2 (top left corner)
             waiting_time: 0.0,//snake automatically starts moving
+            theme,
             food_exists: true,//food will spawn at below x and y (6 and 4 coord)
             food_x: 6,
             food_y: 4,
