@@ -140,4 +140,8 @@ impl Snake {//implementing Snake
         }
         return false;
     }
+    pub fn cut_in_half(&mut self) {
+
+
+    }
 }

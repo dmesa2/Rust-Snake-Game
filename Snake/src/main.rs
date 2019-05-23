@@ -149,9 +149,6 @@ fn main() {
 		}
 	    }
 	 
-//        unsafe {     
-        //    launch_game(THEME);
- //       }
           launch_game(theme);
      } }}
 
@@ -167,7 +164,7 @@ fn launch_game(theme: Color) {
 		    .exit_on_esc(true)//if we hit esc key then we will exit the game
 		    .build()
 		    .unwrap();//deals with any errors that may come along
-	        let mut game = Game::new(width, height, theme);//create a new game
+	        let mut game = Game::new(theme, width, height);//create a new game
           
 	        music::start::<BackgroundMusic, SoundEffect, _>(16, || {
                 unsafe {
