@@ -55,6 +55,8 @@ mod game;//linking game file
 use piston_window::*;
 use piston_window::types::Color;
 
+use std::process;
+
 use game::Game;
 use draw::to_coord_u32;
 
@@ -65,6 +67,7 @@ use std::str::FromStr;
 
 const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
 const WHITE: Color = [1.0, 1.0, 1.0, 0.50];//white color
+const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//black color
 const BEACH_THEME: Color = [0.0, 0.0, 0.5, 1.0];
 const DUNGEON_THEME: Color = [0.5, 0.5, 0.5, 1.0];
 const FIELD_THEME: Color = [0.0, 0.9, 0.0, 0.8];
@@ -95,6 +98,8 @@ fn main() {
     let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
     let background_image: G2dTexture = Texture::from_path(&mut theme_menu.factory,&background_image0,Flip::None,&TextureSettings::new()).unwrap();
 
+	let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
+
     while let Some(e) = theme_menu.next() {
 	theme_menu.draw_2d(&e, |c, g| {
 	    clear([1.0,1.0,1.0,1.0], g);
@@ -103,6 +108,8 @@ fn main() {
 	    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 1 to play BEACH THEME",&mut glyphs,&c.draw_state,c.transform.trans(20.0,200.0),g).unwrap();
 	    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 2 to play FIELD THEME",&mut glyphs,&c.draw_state,c.transform.trans(20.0,300.0),g).unwrap();
 	    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 3 to play DUNGEON THEME",&mut glyphs,&c.draw_state,c.transform.trans(20.0,400.0),g).unwrap();
+		text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 4 to EXIT",&mut glyphs,&c.draw_state,c.transform.trans(20.0,485.0),g).unwrap();
+		text::Text::new_color([0.0,0.0,0.0,1.0],20).draw(&format!("Current score to beat: {}", data),&mut glyphs,&c.draw_state,c.transform.trans(235.0,150.0),g).unwrap();
 
 	});
 	  
@@ -112,9 +119,11 @@ fn main() {
 		Key::D1 => BEACH_THEME,
 		Key::D2 => FIELD_THEME,
 		Key::D3 => DUNGEON_THEME,
+		Key::D4 => process::exit(0x0100),	
 		Key::NumPad1 => BEACH_THEME,
 		Key::NumPad2 => FIELD_THEME,
 		Key::NumPad3 => DUNGEON_THEME,
+		Key::NumPad3 => process::exit(0x0100),
 		_ => BEACH_THEME,
 	    };
 	    
@@ -134,6 +143,8 @@ fn main() {
     let mut glyphs2 = Glyphs::new(font, factory,TextureSettings::new()).unwrap();
     let background_image2: G2dTexture = Texture::from_path(&mut menu.factory,&background_image0,Flip::None,&TextureSettings::new()).unwrap();
 
+//	let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
+
     while let Some(e) = menu.next() {
 	menu.draw_2d(&e, |c, g| {
 	    clear([1.0,1.0,1.0,1.0], g);
@@ -142,6 +153,8 @@ fn main() {
 	    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 1 to play level EASY",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,150.0),g).unwrap();
 	    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 2 to play level MEDIUM",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,200.0),g).unwrap();
 	    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 3 to play level DIFFICULT",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,250.0),g).unwrap();
+		text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 4 to EXIT",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,300.0),g).unwrap();
+	//	text::Text::new_color([0.0,0.0,0.0,1.0],20).draw(&format!("Current score to beat: {}", data),&mut glyphs2,&c.draw_state,c.transform.trans(10.0,300.0),g).unwrap();
 
 	 });
 	   if let Some(Button::Keyboard(number)) = e.press_args() {
@@ -149,9 +162,11 @@ fn main() {
 		Key::D1 => Some(0.17),
 		Key::D2 => Some(0.12),
 		Key::D3 => Some(0.05),
+		Key::D4 => process::exit(0x0100),
 		Key::NumPad1 => Some(0.17),
 		Key::NumPad2 => Some(0.12),
 		Key::NumPad3 => Some(0.05),
+		Key::NumPad4 =>  process::exit(0x0100),
 		_ => Some(0.1),
 	    };
 	    let level_result = level.unwrap();
@@ -186,7 +201,6 @@ fn launch_game(theme: Color) {
 
 			let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
 			game.high_score = FromStr::from_str(&data).unwrap();
-	        println!("{}", game.high_score);
 
 	        music::start::<BackgroundMusic, SoundEffect, _>(16, || {
                 unsafe {
