@@ -169,6 +169,7 @@ impl Game {//implementation method for the struct game
             }
             else if self.food_type == "orange".to_string() {
                 self.snake.cut_in_half();
+                self.count_up_score(1);
             }
         }
     }
@@ -247,9 +248,6 @@ impl Game {//implementation method for the struct game
 
             if self.score > self.high_score{
 
-               // let data: String = self.high_score.to_string();
-                //fs::write("highscore.txt", data).expect("Unable to write file");
-                
                 let data: String = self.score.to_string();
                 let mut f = File::create("highscore.txt").expect("Unable to create file");
                 f.write_all(data.as_bytes()).expect("Unable to write data");
