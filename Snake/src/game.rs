@@ -1,6 +1,9 @@
 extern crate piston_window;
 extern crate find_folder;
 
+use crate::main;
+
+use std::process;
 use piston_window::*;//import all of piston 
 use piston_window::types::Color;
 
@@ -10,14 +13,19 @@ use crate::MOVING_PERIOD;
 use crate::snake::{Direction, Snake};//bring in snake
 use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 
+use std::fs;
+
+use std::fs::File;
+use std::io::Write;
+
 const APPLE_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
 const BERRY_COLOR: Color = [0.80, 0.00, 0.80, 1.0]; // 80% red, 80% blue with 100% opacity
 const ORANGE_COLOR: Color = [0.80, 0.50, 0.00, 1.0];
 const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0]; // Dark black border
 const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacit
 const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//white color
-const RED: Color = [1.0, 0.0, 0.0, 1.0];
-
+const RED: Color = [1.0, 0.0, 0.0, 1.0]; //red color
+const BLUE: Color = [0.0,0.0,1.0,1.0]; //blue color
 //const MOVING_PERIOD: f64 = 0.1; //Snake's speed (FPS) -  We can adjust this 3 times for difficulty!
 const RESTART_TIME: f64 = 1.0; //Amount of time between failure state and next game (1 second)
 
@@ -43,6 +51,7 @@ pub struct Game {//Game struct
     obs_y: i32,
 
     pub score: i32, // score for game
+    pub high_score: i32, //high score for game
 
     game_over: bool,
     waiting_time: f64,
@@ -63,6 +72,7 @@ impl Game {//implementation method for the struct game
             obs_x: 25,
             obs_y: 5,
             score: 0, // score
+            high_score: 0, //high score
             game_over: false // when we hit wall this will be true
         }
     }
@@ -235,7 +245,63 @@ impl Game {//implementation method for the struct game
             let factory = window.factory.clone();
             let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
 
-            while let Some(e) = window.next() {
+            if self.score > self.high_score{
+
+               // let data: String = self.high_score.to_string();
+                //fs::write("highscore.txt", data).expect("Unable to write file");
+                
+                let data: String = self.score.to_string();
+                let mut f = File::create("highscore.txt").expect("Unable to create file");
+                f.write_all(data.as_bytes()).expect("Unable to write data");
+
+                while let Some(e) = window.next() {//Game over menu
+                    window.draw_2d(&e, |c, g| {
+                    clear([0.5, 0.5, 0.5, 1.0], g);
+
+                    text::Text::new_color(BLACK, 25)
+                    .draw(
+                    &format!("New High Score: {}", self.score),
+                    &mut glyphs,
+                    &c.draw_state,
+                    c.transform.trans(80.0, 150.0),
+                    g).unwrap();
+
+                    text::Text::new_color(BLUE, 20)
+                    .draw(
+                    &format!("Choose from the below menu:"),
+                    &mut glyphs,
+                    &c.draw_state,
+                    c.transform.trans(40.0, 200.0),
+                    g).unwrap();
+
+                    text::Text::new_color(BLUE,20)
+                    .draw("Press 1 to Play Again",
+                    &mut glyphs,
+                    &c.draw_state,
+                    c.transform.trans(40.0,250.0),
+                    g).unwrap();
+
+	                text::Text::new_color(BLUE,20)
+                    .draw("Press 2 to Quit",
+                    &mut glyphs,&c.draw_state,
+                    c.transform.trans(40.0,300.0),
+                    g).unwrap();
+                    });
+
+                if let Some(Button::Keyboard(theme)) = e.press_args() {
+
+                let theme = match theme {
+		        Key::D1 => window.set_should_close(true),
+		        Key::D2 => process::exit(0x0100),
+		        Key::NumPad1 => window.set_should_close(true),
+		        Key::NumPad2 => process::exit(0x0100),
+	      	    _ => window.set_should_close(true),
+	          };
+              }
+              }
+            }
+
+            while let Some(e) = window.next() {//Game over menu
                 window.draw_2d(&e, |c, g| {
                     clear([0.5, 0.5, 0.5, 1.0], g);
 
@@ -247,15 +313,39 @@ impl Game {//implementation method for the struct game
                     c.transform.trans(93.0, 150.0),
                     g).unwrap();
 
-                    text::Text::new_color(RED, 20)
+                    text::Text::new_color(BLUE, 20)
                     .draw(
-                    &format!("Click the top-left button"),
+                    &format!("Choose from the below menu:"),
                     &mut glyphs,
                     &c.draw_state,
-                    c.transform.trans(60.0, 200.0),
+                    c.transform.trans(40.0, 200.0),
+                    g).unwrap();
+
+                    text::Text::new_color(BLUE,20)
+                    .draw("Press 1 to Play Again",
+                    &mut glyphs,
+                    &c.draw_state,
+                    c.transform.trans(40.0,250.0),
+                    g).unwrap();
+
+	                text::Text::new_color(BLUE,20)
+                    .draw("Press 2 to Quit",
+                    &mut glyphs,&c.draw_state,
+                    c.transform.trans(40.0,300.0),
                     g).unwrap();
                 });
+            if let Some(Button::Keyboard(theme)) = e.press_args() {
+
+            let theme = match theme {
+		        Key::D1 => window.set_should_close(true),
+		        Key::D2 => process::exit(0x0100),
+		        Key::NumPad1 => window.set_should_close(true),
+		        Key::NumPad2 => process::exit(0x0100),
+	      	    _ => window.set_should_close(true),
+	         };
+                
             }
+          }
             self.game_over = true;//else game over
         }
         self.waiting_time = 0.0;//reset waiting time and restart game

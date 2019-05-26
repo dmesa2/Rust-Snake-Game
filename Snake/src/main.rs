@@ -60,6 +60,9 @@ use draw::to_coord_u32;
 
 use crate::game::SoundEffect;
 
+use std::fs;
+use std::str::FromStr;
+
 const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
 const WHITE: Color = [1.0, 1.0, 1.0, 0.50];//white color
 const BEACH_THEME: Color = [0.0, 0.0, 0.5, 1.0];
@@ -74,7 +77,14 @@ enum BackgroundMusic {
     ThemeSong,
 }
 
+//let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
+//let highscore: i32 = FromStr::from_str(&data).unwrap();
+
 fn main() {
+
+//	let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
+//	highscore = FromStr::from_str(&data).unwrap();
+//	println!("{}", highscore);
 
     let mut theme_menu: PistonWindow = WindowSettings::new("Theme Menu", [to_coord_u32(30),to_coord_u32(20)]).exit_on_esc(true).build().unwrap();
     let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
@@ -173,7 +183,11 @@ fn launch_game(theme: Color) {
 	    let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
    
 	        let mut game = Game::new(theme, width, height);//create a new game
-          
+
+			let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
+			game.high_score = FromStr::from_str(&data).unwrap();
+	        println!("{}", game.high_score);
+
 	        music::start::<BackgroundMusic, SoundEffect, _>(16, || {
                 unsafe {
 		    music::bind_music_file(BackgroundMusic::ThemeSong, THEME_SONG);
@@ -183,12 +197,12 @@ fn launch_game(theme: Color) {
 		music::set_volume(music::MAX_VOLUME);
 		music::play_music(&BackgroundMusic::ThemeSong, music::Repeat::Forever);
 
-		while let Some(event) = window.next() {//cleans up window - every time snake moves window is cleaned
+		while let Some(event) = window.next() {//cleans up window
 		    if let Some(Button::Keyboard(key)) = event.press_args() {//if button is pushed
 			game.key_pressed(key);//pass the key
 		    }
 		    window.draw_2d(&event, |c, g| {//else draw 2d window
-			    clear(theme, g);//clear window
+			clear(theme, g);//clear window
 			game.draw(&c, g);//draw game
 
 		    text::Text::new_color(WHITE, 30)//display score
