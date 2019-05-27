@@ -47,6 +47,7 @@ extern crate piston_window;
 extern crate rand;
 extern crate music;
 extern crate find_folder;
+extern crate gfx_device_gl;
 
 mod draw;//linking draw file
 mod snake;//linking snake file
@@ -55,7 +56,10 @@ mod game;//linking game file
 use piston_window::*;
 use piston_window::types::Color;
 
+//use gfx_device_gl::Factory;
+
 use std::process;
+//use std::borrow::BorrowMut;
 
 use game::Game;
 use draw::to_coord_u32;
@@ -65,9 +69,9 @@ use crate::game::SoundEffect;
 use std::fs;
 use std::str::FromStr;
 
-const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
+//const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
 const WHITE: Color = [1.0, 1.0, 1.0, 0.50];//white color
-const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//black color
+//const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//black color
 const BEACH_THEME: Color = [0.0, 0.0, 0.5, 1.0];
 const DUNGEON_THEME: Color = [0.5, 0.5, 0.5, 1.0];
 const FIELD_THEME: Color = [0.0, 0.9, 0.0, 0.8];
@@ -194,8 +198,9 @@ fn launch_game(theme: Color) {
 		    .unwrap();//deals with any errors that may come along
 	    let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
 	    let ref font = assets.join("Roboto-Regular.ttf");
-	    let factory2 = window.factory.clone();
-	    let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
+	    let factory3 = window.factory.clone();
+            let mut factory4 = window.factory.clone();
+	    let mut glyphs = Glyphs::new(font, factory3,TextureSettings::new()).unwrap();
    
 	        let mut game = Game::new(theme, width, height);//create a new game
 
@@ -217,7 +222,8 @@ fn launch_game(theme: Color) {
 		    }
 		    window.draw_2d(&event, |c, g| {//else draw 2d window
 			clear(theme, g);//clear window
-			game.draw(&c, g);//draw game
+			game.draw(&c, g, &mut factory4);//draw game
+//			game.draw(&c, g);//draw game
 
 		    text::Text::new_color(WHITE, 30)//display score
 			.draw(

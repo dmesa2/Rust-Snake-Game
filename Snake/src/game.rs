@@ -1,7 +1,7 @@
 extern crate piston_window;
 extern crate find_folder;
 
-use crate::main;
+//use crate::main;
 
 use std::process;
 use piston_window::*;//import all of piston 
@@ -13,10 +13,12 @@ use crate::MOVING_PERIOD;
 use crate::snake::{Direction, Snake};//bring in snake
 use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 
-use std::fs;
+//use std::fs;
 
 use std::fs::File;
 use std::io::Write;
+
+use gfx_device_gl::Factory;
 
 const APPLE_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
 const BERRY_COLOR: Color = [0.80, 0.00, 0.80, 1.0]; // 80% red, 80% blue with 100% opacity
@@ -24,7 +26,7 @@ const ORANGE_COLOR: Color = [0.80, 0.50, 0.00, 1.0];
 const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0]; // Dark black border
 const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacit
 const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//black color
-const RED: Color = [1.0, 0.0, 0.0, 1.0]; //red color
+//const RED: Color = [1.0, 0.0, 0.0, 1.0]; //red color
 const BLUE: Color = [0.0,0.0,1.0,1.0]; //blue color
 //const MOVING_PERIOD: f64 = 0.1; //Snake's speed (FPS) -  We can adjust this 3 times for difficulty!
 const RESTART_TIME: f64 = 1.0; //Amount of time between failure state and next game (1 second)
@@ -38,7 +40,7 @@ pub enum SoundEffect {
 pub struct Game {//Game struct
     snake: Snake,
 
-    theme: Color,
+    //theme: Color,
     food_exists: bool,
     food_x: i32,
     food_y: i32,
@@ -58,11 +60,11 @@ pub struct Game {//Game struct
 }
 
 impl Game {//implementation method for the struct game
-    pub fn new(theme: Color, width: i32, height: i32) -> Game {//instatiates new game
+    pub fn new(_theme: Color, width: i32, height: i32) -> Game {//instatiates new game
         Game {
             snake: Snake::new(2, 2),//snake starts at 2,2 (top left corner)
             waiting_time: 0.0,//snake automatically starts moving
-            theme,
+     //       theme,
             food_exists: true,//food will spawn at below x and y (6 and 4 coord)
             food_x: 6,
             food_y: 4,
@@ -99,8 +101,9 @@ impl Game {//implementation method for the struct game
         self.update_snake(dir);
     }
 
-    pub fn draw(&self, con: &Context, g: &mut G2d) {
-        self.snake.draw(con, g);//iterates through linked list
+    pub fn draw(&self, con: &Context, g: &mut G2d, factory: &mut Factory) {
+        self.snake.draw(con, g, factory);//iterates through linked list
+//        self.snake.draw(con, g);//iterates through linked list
 
         if self.food_exists {//draw block
             if self.food_type == "apple".to_string() {
@@ -288,7 +291,7 @@ impl Game {//implementation method for the struct game
 
                 if let Some(Button::Keyboard(theme)) = e.press_args() {
 
-                let theme = match theme {
+                let _theme = match theme {
 		        Key::D1 => window.set_should_close(true),
 		        Key::D2 => process::exit(0x0100),
 		        Key::NumPad1 => window.set_should_close(true),
@@ -334,7 +337,7 @@ impl Game {//implementation method for the struct game
                 });
             if let Some(Button::Keyboard(theme)) = e.press_args() {
 
-            let theme = match theme {
+            let _theme = match theme {
 		        Key::D1 => window.set_should_close(true),
 		        Key::D2 => process::exit(0x0100),
 		        Key::NumPad1 => window.set_should_close(true),
