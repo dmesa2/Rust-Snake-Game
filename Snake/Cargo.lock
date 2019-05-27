@@ -6,6 +6,7 @@ version = "0.1.0"
 dependencies = [
  "current 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "find_folder 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gfx_device_gl 0.14.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston-music 0.25.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston_window 0.74.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "pistoncore-sdl2_window 0.53.0 (registry+https://github.com/rust-lang/crates.io-index)",
