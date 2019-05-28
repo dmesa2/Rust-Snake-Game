@@ -72,7 +72,7 @@ impl Game {//implementation method for the struct game
             food_type: "apple".to_string(),
             width, // size of board
             height,
-            obs_exists: false,
+            obs_exists: false, //game will start without poison apple
             obs_x: -1,
             obs_y: -1,
             score: 0, // score
@@ -119,7 +119,7 @@ impl Game {//implementation method for the struct game
             }
         }
         
-        if self.obs_exists { //draw poison apple
+        if self.obs_exists { //draw poison apple if it exists
             draw_block([0.3,0.0,0.3,1.0], self.obs_x,self.obs_y,con,g);
         }
  
@@ -157,7 +157,7 @@ impl Game {//implementation method for the struct game
             self.add_food();
         }
 
-        if !self.obs_exists {
+        if !self.obs_exists { //try to add poison apple if it doesn't exist
             self.add_obs();
         }
 
@@ -187,7 +187,7 @@ impl Game {//implementation method for the struct game
         }
     }
 
-    fn check_obs(&mut self) {
+    fn check_obs(&mut self) { //remove poison apple if score is divisible by 5 (and not divisible by 20)
         if self.score % 5 == 0 && self.score % 20 != 0 {
             self.obs_exists = false;
         }	
@@ -202,7 +202,7 @@ impl Game {//implementation method for the struct game
         }
         
         if self.obs_exists {
-            if self.snake.overlap_tail(self.obs_x, self.obs_y) {//if snake runs into obstacle
+            if self.snake.overlap_tail(self.obs_x, self.obs_y) {//if snake eats poison apple
                 music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
                 return false;//return false
             }
@@ -261,7 +261,7 @@ impl Game {//implementation method for the struct game
         }
     }
 
-    fn add_obs(&mut self) { //add poison apple if score is divisible by 10
+    fn add_obs(&mut self) { //add poison apple
         let mut rng = thread_rng();
 
         let mut new_x = rng.gen_range(1, self.width - 1);
@@ -283,7 +283,7 @@ impl Game {//implementation method for the struct game
         if self.check_if_snake_alive(dir) {//if snake is alive
             self.snake.move_forward(dir);//then move snake forward
             self.check_eating(); //if snake ate a fruit
-            self.check_obs(); //add poison apple if none
+            self.check_obs(); //check if poison apple can be removed
         } else {
             let mut window: PistonWindow =
             WindowSettings::new("Game Over!", [375; 2])
@@ -403,6 +403,7 @@ impl Game {//implementation method for the struct game
         self.food_x = 6;//food will start here
         self.food_y = 4;//food will start here
         self.food_type = "apple".to_string();
+        self.obs_exists = false; //no poison apple at first
         self.obs_x = -1;
         self.obs_y = -1;
         self.game_over = false;//game over is false
