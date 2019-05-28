@@ -54,7 +54,7 @@ pub struct Game {//Game struct
 
     pub score: i32, // score for game
     pub high_score: i32, //high score for game
-    pub multiplayer: bool,
+    pub multiplayer: i32,
     pub melee: i32,
 
     game_over: bool,
@@ -62,7 +62,7 @@ pub struct Game {//Game struct
 }
 
 impl Game {//implementation method for the struct game
-    pub fn new(theme: Color, width: i32, height: i32, player_shift: i32, multiplayer: bool, melee: i32) -> Game {//instatiates new game
+    pub fn new(theme: Color, width: i32, height: i32, player_shift: i32, multiplayer: i32, melee: i32) -> Game {//instatiates new game
         Game {
             snake: Snake::new(2+(player_shift-1)*width, 2+(melee * 20)),//snake starts at 2,2 (top left corner)
             waiting_time: 0.0,//snake automatically starts moving
@@ -255,8 +255,9 @@ impl Game {//implementation method for the struct game
                 _ => 1,
             };
             let window_title = match self.multiplayer {
-                true => format!("Player {} Wins!", opp),  
-                false => format!("Player {} Wins!", self.player_shift),
+                1 => format!("Player {} Wins!", opp),  
+                0 => format!("Player {} Wins!", self.player_shift),
+                _ => format!("Player {} Wins!", self.player_shift),
             };
             let mut window: PistonWindow =
             WindowSettings::new(window_title.clone(), [375; 2])
