@@ -49,6 +49,7 @@ pub struct Game {//Game struct
     width: i32,
     height: i32,
 
+    obs_exists: bool,
     obs_x: i32,
     obs_y: i32,
 
@@ -71,8 +72,9 @@ impl Game {//implementation method for the struct game
             food_type: "apple".to_string(),
             width, // size of board
             height,
-            obs_x: 25,
-            obs_y: 5,
+            obs_exists: false,
+            obs_x: -1,
+            obs_y: -1,
             score: 0, // score
             high_score: 0, //high score
             game_over: false // when we hit wall this will be true
@@ -116,11 +118,15 @@ impl Game {//implementation method for the struct game
                 draw_block(ORANGE_COLOR, self.food_x, self.food_y, con, g);
             }
         }
+        
+        if self.obs_exists { //draw poison apple
+            draw_block([0.3,0.0,0.3,1.0], self.obs_x,self.obs_y,con,g);
+        }
  
-        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y, con, g);
-        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y, con, g);
-        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y+1, con, g);
-        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y+1, con, g);
+//        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y, con, g);
+//        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y, con, g);
+//        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y+1, con, g);
+//        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y+1, con, g);
 
         draw_rectangle(BORDER_COLOR, 0, 0, self.width, 1, con, g);//draws the borders
         draw_rectangle(BORDER_COLOR, 0, self.height - 1, self.width, 1, con, g);
@@ -151,6 +157,10 @@ impl Game {//implementation method for the struct game
             self.add_food();
         }
 
+        if !self.obs_exists {
+            self.add_obs();
+        }
+
         unsafe {
             if self.waiting_time > MOVING_PERIOD {//update snake if this is true
                 self.update_snake(None);
@@ -172,9 +182,15 @@ impl Game {//implementation method for the struct game
             }
             else if self.food_type == "orange".to_string() {
                 self.snake.cut_in_half();
-                self.count_up_score(1);
+                //self.count_up_score(1);
             }
         }
+    }
+
+    fn check_obs(&mut self) {
+        if self.score % 5 == 0 && self.score % 20 != 0 {
+            self.obs_exists = false;
+        }	
     }
 
     fn check_if_snake_alive(&self, dir: Option<Direction>) -> bool {//check if snake is alive
@@ -184,11 +200,14 @@ impl Game {//implementation method for the struct game
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;//return false
         }
-
-        if self.snake.overlap_tail(self.obs_x, self.obs_y) {//if snake runs into obstacle
-            music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
-            return false;//return false
+        
+        if self.obs_exists {
+            if self.snake.overlap_tail(self.obs_x, self.obs_y) {//if snake runs into obstacle
+                music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
+                return false;//return false
+            }
         }
+/*
         if self.snake.overlap_tail(self.obs_x+1, self.obs_y) {//if snake runs into obstacle
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;//return false
@@ -201,7 +220,7 @@ impl Game {//implementation method for the struct game
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;//return false
         }
-
+*/
         let result = next_x > 0 && next_y > 0 && next_x < self.width - 1 && next_y < self.height - 1; //if we go out of bounds
         if result == false {
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
@@ -215,9 +234,16 @@ impl Game {//implementation method for the struct game
 
         let mut new_x = rng.gen_range(1, self.width - 1);
         let mut new_y = rng.gen_range(1, self.height - 1);
-        while self.snake.overlap_tail(new_x, new_y) {//we don't want snake to overlap with apple
-            new_x = rng.gen_range(1, self.width - 1);
-            new_y = rng.gen_range(1, self.height - 1);
+        if self.obs_exists {
+            while self.snake.overlap_tail(new_x, new_y) || (new_x == self.obs_x && new_y == self.obs_y) {//we don't want snake to overlap with apple or obstacle
+                new_x = rng.gen_range(1, self.width - 1);
+                new_y = rng.gen_range(1, self.height - 1);
+            }
+        } else {
+            while self.snake.overlap_tail(new_x, new_y) {//we don't want snake to overlap with apple
+                new_x = rng.gen_range(1, self.width - 1);
+                new_y = rng.gen_range(1, self.height - 1);
+            }
         }
 
         self.food_x = new_x;
@@ -235,11 +261,29 @@ impl Game {//implementation method for the struct game
         }
     }
 
+    fn add_obs(&mut self) { //add poison apple if score is divisible by 10
+        let mut rng = thread_rng();
+
+        let mut new_x = rng.gen_range(1, self.width - 1);
+        let mut new_y = rng.gen_range(1, self.height - 1);
+        while self.snake.overlap_tail(new_x, new_y) && (new_x == self.food_x && new_y == self.food_y) {//we don't want snake to overlap with apple or obstacle
+            new_x = rng.gen_range(1, self.width - 1);
+            new_y = rng.gen_range(1, self.height - 1);
+        }
+
+        if self.score >= 20 && self.score % 20 == 0 {
+            self.obs_x = new_x;
+            self.obs_y = new_y;
+            self.obs_exists = true;
+        }
+    }
+
     fn update_snake(&mut self, dir: Option<Direction>) {
 
         if self.check_if_snake_alive(dir) {//if snake is alive
             self.snake.move_forward(dir);//then move snake forward
             self.check_eating(); //if snake ate a fruit
+            self.check_obs(); //add poison apple if none
         } else {
             let mut window: PistonWindow =
             WindowSettings::new("Game Over!", [375; 2])
@@ -359,8 +403,8 @@ impl Game {//implementation method for the struct game
         self.food_x = 6;//food will start here
         self.food_y = 4;//food will start here
         self.food_type = "apple".to_string();
-        self.obs_x = 25;
-        self.obs_y = 5;
+        self.obs_x = -1;
+        self.obs_y = -1;
         self.game_over = false;//game over is false
         self.score = 0; // reset score to 0
     }
