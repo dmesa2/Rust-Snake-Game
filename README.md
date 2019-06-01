@@ -34,7 +34,7 @@ $ brew install sdl2_mixer
 cd into Snake/src
 
 ```
- cargo run
+ $ cargo run
 ```
 
 ## Instructions
