@@ -1,47 +1,71 @@
-# Rust-Snake-Game
+# RustProject - Snake Game
+Rust Project for CS410P
 
-## Implementation of the classic snake game written in Rust. 
+## Engine
+This project uses the Piston Engine
 
-## ----------Below are the sources that we used in building this project----------
+## Building
 
-1.) https://www.youtube.com/watch?v=DnT_7M7L7vo
-2.) https://github.com/tensor-programming/snake-tutorial
-3.) https://github.com/PistonDevelopers/piston
-4.) https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect)
-5.) https://www.youtube.com/watch?v=nQV7DKBqGdk (Under the Sea Background Music)
-6.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)
-7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
-8.) https://rustacean.net (Main Menu Image)
-9.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
+Building on macOS
 
--------------------------------------------------------------------------------
+Make sure cargo is installed locally using rustup. Clone the repo.
 
-## We are using the open source rust code from tensor-programming to build off of. This open source code consists of:
+The following packages need to be installed:
 
-        - A basic board block that the snake will play in
-        - A basic snake built in blocks
-        - A randomly placed apple that when eaten the snake will grow by one block
-        - If snake hits wall or self then the game automatically resets
-        
-        Features that we will add (or plan to):
+First run the following: 
 
-        - A better UI (An actually looking snake, actual looking apple, better background)
-        - Menu in the beginning that will consist of (easy, medium, hard) - The speed of the snake will depend on the difficulty
-        - Sound effects (when snake bites itself, eats apple, hits a wall)
-        - Score tracking (Perhaps keep track or previous scores to compare against)
-        - Pop up menu that will declare "Game Over" at the end with the score
-        - Perhaps a congratualations pop up if the user gets the snake to a big enough size and the game can't go any further
-        - Menu at the end asking user to either Play Again or Quit
-        - Add other elements such as berries for double points for limited time and oranges to cut snake's body in half (excluding head and tail) but keep score same (snake will not go below length 2)
-        - Add a poison apple obstacle that will spawn if score mod 20 = 0, and disappear if score mod 5 = 0 (and score mod 20 != 0)
+```
+$ cargo check
+```
 
-        *Feel free to add more to this list!*
+Followed by (assuming you have brew installed): 
 
-## Some of the crates used in this project depend on sdl2 and sdl2 mixer to be installed locally, and the repository must be downloaded and run locally as well.
+```
+$ brew install sdl2
+```
+and
+
+```
+$ brew install sdl2_mixer
+```
+
+Building on Linux
+
+Same instructions as above but instead of installing sdl2 and sdl2_mixer, 
+the following should be installed instead: libsdl2-mixer-2.0-0 and libsdl2-mixer-dev
+
+## How to run
+
+cd into Snake/src
+
+```
+ $ cargo run
+```
 
 ## Instructions
 
-        1. Download the repository locally, and make sure sdl2 and sdl2_mixer are installed. (We used brew install sdl2 and brew install sdl2_mixer)
-        2. cd into Snake/src
-        3. type 'cargo check' followed by 'cargo run'
-        4. Enjoy!
+Choose any of the options from the menu
+
+Use the arrow keys to change direction of the snake
+
+Apples - 1 point and snake grows one block
+Berries - 2 points and snake grows one block
+Orange - 0 point and snake is cut in half
+
+Avoid hitting the walls or any obstacles. Your score is tracked in the top right corner.
+Your objective is to beat the high score which is saved to a text-file and overwritten if
+that score is beaten.
+
+## Sources
+
+Our main source for this project comes from tensor programming. We used this source code and built off of it and added a lot of features. 
+These features are commented at the top in the main.rs file.
+
+1.) https://github.com/tensor-programming/snake-tutorial 
+2.)  https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect) 
+3.) https://github.com/PistonDevelopers/piston
+4.) https://www.youtube.com/watch?v=nQV7DKBqGdk (Under the Sea Background Music)
+5.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect) 
+6.) https://www.fontsquirrel.com/fonts/list/popular(Main Menu Font)
+7.) https://rustacean.net (Main Menu Image)
+8.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
