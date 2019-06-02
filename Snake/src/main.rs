@@ -243,6 +243,17 @@ fn launch_game(theme: Color) {
 		  }
                  });
 }     
+
+/*
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn check_file_init() {
+        let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
+        assert_eq!("101".to_string(),data);
+    }
+}
+*/
 /*
 
 fn main() {

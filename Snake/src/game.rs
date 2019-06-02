@@ -411,3 +411,20 @@ impl Game {//implementation method for the struct game
         self.score = 0; // reset score to 0
     }
 }
+
+/*
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn check_food_gen() {
+        add_food();
+        assert_eq!(true,self.food_exists);
+    }
+
+    #[test]
+    fn check_obs_gen() {
+        add_obs();
+        assert_eq!(true,self.obs_exists);
+    }
+}
+*/

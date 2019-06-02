@@ -69,3 +69,18 @@ These features are commented at the top in the main.rs file.
 6.) https://www.fontsquirrel.com/fonts/list/popular(Main Menu Font)
 7.) https://rustacean.net (Main Menu Image)
 8.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
+
+## Project Writeup
+
+For this project, we added the following features: 
+
+        - Menu in the beginning that will allow players to configure game difficulty, theme, and mode (single vs. two player)
+        - Different themes (beach, field, and dungeon) with background music to match each
+        - Sound effects when snake eats and dies
+        - Score tracking for each game as well as a high score over all games
+        - Pop up menu that will declare "Game Over" at the end with the score and give players options to play again or quit
+        - More food options (berries for double points, oranges to halve snake's body length)
+        - A poison apple obstacle that appears when score >= 20 and score % 20 = 0, and disappears when score % 5 = 0 (and score % 20 != 0)
+        - Two-player splitscreen mode
+
+These features were all implemented successfully. We also worked on better graphics for the game (turning snake into line of crabs), but didn't finish its implementation. Adding unit tests was also difficult to figure out given the game's structure. We learned about the process of working on a project using Rust, including the importance of research when planning to implement something unfamiliar.
