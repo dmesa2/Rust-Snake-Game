@@ -29,6 +29,11 @@ and
 $ brew install sdl2_mixer
 ```
 
+Building on Linux
+
+Same instructions as above but instead of installing sdl2 and sdl2_mixer, 
+the following should be installed instead: libsdl2-mixer-2.0-0 and libsdl2-mixer-dev
+
 ## How to run
 
 cd into Snake/src
