@@ -50,7 +50,7 @@ Use the arrow keys to change direction of the snake
 
 Apples - 1 point and snake grows one block
 Berries - 2 points and snake grows one block
-Orange - 1 point and snake is cut in half
+Orange - 0 point and snake is cut in half
 
 Avoid hitting the walls or any obstacles. Your score is tracked in the top right corner.
 Your objective is to beat the high score which is saved to a text-file and overwritten if
