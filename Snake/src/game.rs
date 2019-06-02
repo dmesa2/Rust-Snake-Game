@@ -18,7 +18,7 @@ use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 use std::fs::File;
 use std::io::Write;
 
-use gfx_device_gl::Factory;
+//use gfx_device_gl::Factory;
 
 const APPLE_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
 const BERRY_COLOR: Color = [0.80, 0.00, 0.80, 1.0]; // 80% red, 80% blue with 100% opacity
@@ -103,9 +103,10 @@ impl Game {//implementation method for the struct game
         self.update_snake(dir);
     }
 
-    pub fn draw(&self, con: &Context, g: &mut G2d, factory: &mut Factory) {
-        self.snake.draw(con, g, factory);//iterates through linked list
-//        self.snake.draw(con, g);//iterates through linked list
+    pub fn draw(&self, con: &Context, g: &mut G2d) {
+//    pub fn draw(&self, con: &Context, g: &mut G2d, factory: &mut Factory) {
+//        self.snake.draw(con, g, factory);//iterates through linked list
+        self.snake.draw(con, g);//iterates through linked list
 
         if self.food_exists {//draw block
             if self.food_type == "apple".to_string() {
@@ -161,7 +162,7 @@ impl Game {//implementation method for the struct game
             self.add_obs();
         }
 
-        unsafe {
+        unsafe { //Use of mutable static requires unsafe block here
             if self.waiting_time > MOVING_PERIOD {//update snake if this is true
                 self.update_snake(None);
             }

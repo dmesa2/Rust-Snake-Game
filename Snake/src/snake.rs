@@ -2,7 +2,7 @@ use std::collections::LinkedList;//allows us to push and pop from either end of 
 //use piston_window::{Context, G2d, Glyphs, TextureSettings, WindowSettings};//bringing in context and graphical buffer
 use piston_window::*;
 use piston_window::types::Color;//bringing in color
-use gfx_device_gl::Factory;
+//use gfx_device_gl::Factory;
 
 use crate::draw::draw_block;//bring in draw block from draw.rs file
 //use crate::draw::draw_crab;//bring in draw block from draw.rs file
@@ -61,9 +61,10 @@ impl Snake {//implementing Snake
         }
     }
 
-    pub fn draw(&self, con: &Context, g: &mut G2d, factory: &mut Factory) {//Iterate through list and call draw block function
-        let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
-        let background_image0 = assets.join("rustacean-orig-noshadow.png");
+    pub fn draw(&self, con: &Context, g: &mut G2d) {//Iterate through list and call draw block function
+//    pub fn draw(&self, con: &Context, g: &mut G2d, factory: &mut Factory) {//Iterate through list and call draw block function
+//        let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
+//        let background_image0 = assets.join("rustacean-orig-noshadow.png");
 //        let background_image: G2dTexture = Texture::from_path(factory,&background_image0,Flip::None,&TextureSettings::new()).unwrap(); //PROBLEM LINE
 
         for block in &self.body {//Renders out green snake

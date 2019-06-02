@@ -41,7 +41,9 @@ We are using the open source rust code from tensor-programming to build off of. 
         Feel free to add more to this list!*
 */
 
+//The following three lines are to get rid of compilation warnings
 #![allow(non_snake_case)]
+#![allow(illegal_floating_point_literal_pattern)]
 
 extern crate piston_window;
 extern crate rand;
@@ -127,7 +129,7 @@ fn main() {
 		Key::NumPad1 => BEACH_THEME,
 		Key::NumPad2 => FIELD_THEME,
 		Key::NumPad3 => DUNGEON_THEME,
-		Key::NumPad3 => process::exit(0x0100),
+		Key::NumPad4 => process::exit(0x0100),
 		_ => BEACH_THEME,
 	    };
 	    
@@ -199,7 +201,7 @@ fn launch_game(theme: Color) {
 	    let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
 	    let ref font = assets.join("Roboto-Regular.ttf");
 	    let factory3 = window.factory.clone();
-            let mut factory4 = window.factory.clone();
+            //let mut factory4 = window.factory.clone();
 	    let mut glyphs = Glyphs::new(font, factory3,TextureSettings::new()).unwrap();
    
 	        let mut game = Game::new(theme, width, height);//create a new game
@@ -222,8 +224,8 @@ fn launch_game(theme: Color) {
 		    }
 		    window.draw_2d(&event, |c, g| {//else draw 2d window
 			clear(theme, g);//clear window
-			game.draw(&c, g, &mut factory4);//draw game
-//			game.draw(&c, g);//draw game
+//			game.draw(&c, g, &mut factory4);//draw game
+			game.draw(&c, g);//draw game
 
 		    text::Text::new_color(WHITE, 30)//display score
 			.draw(
