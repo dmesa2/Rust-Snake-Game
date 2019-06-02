@@ -137,7 +137,7 @@ fn main() {
 		FIELD_THEME => "./sounds/field_theme.wav",
 		_ => "./sounds/beach_theme.wav",
 	     };     
-	   unsafe{
+	   unsafe{ //Use of mutable static is unsafe, so must use unsafe block here
 	      THEME = theme;
 	      THEME_SONG = theme_song;
 	   }
@@ -174,7 +174,7 @@ fn main() {
 		_ => Some(0.1),
 	    };
 	    let level_result = level.unwrap();
-	    unsafe {
+	    unsafe { //Use of mutable static is unsafe, so must use unsafe block here
 		if level_result > 0.0 {
 		    MOVING_PERIOD = level_result;
 		}
