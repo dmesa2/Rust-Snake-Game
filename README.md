@@ -79,7 +79,7 @@ For this project, we added the following features:
         - Sound effects when snake eats and dies
         - Score tracking for each game as well as a high score over all games
         - Pop up menu that will declare "Game Over" at the end with the score and give players options to play again or quit
-        - More food options (berries for double points, oranges to halve snake's body length)
+        - More food options (berries for double points, oranges for zero points that halve snake's body length)
         - A poison apple obstacle that appears when score >= 20 and score % 20 = 0, and disappears when score % 5 = 0 (and score % 20 != 0)
         - Two-player splitscreen mode
 
