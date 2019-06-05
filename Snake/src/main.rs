@@ -14,8 +14,6 @@ Instructor: Professor Bart Massey
 7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
 8.) https://rustacean.net (Main Menu Image)
 9.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
-10.)https://www.youtube.com/watch?v=0zG1ahKOXNg (Field theme background music)
-11.)https://www.youtube.com/watch?v=bGFBL_FYF9o (Dungeon theme background music)
 -------------------------------------------------------------------------------
 
 */
@@ -238,8 +236,8 @@ fn launch_melee(theme: Color) {
 	    let factory2 = window.factory.clone();
 	    let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
    
-	        let mut p1_game = Game::new(theme, width, height,1, 1,0);//
-	        let mut p2_game = Game::new(theme, width, height,1, 1,1);//create a new single-player game
+	        let mut p1_game = Game::new(theme, width, height,1, true,0);//
+	        let mut p2_game = Game::new(theme, width, height,1, true,1);//create a new single-player game
 
 			let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
 			p1_game.high_score = FromStr::from_str(&data).unwrap();
@@ -310,8 +308,8 @@ fn launch_two_player_game(theme: Color) {
         let factory2 = window.factory.clone();
         let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
    
-	let mut p1_game = Game::new(theme, width, height, 1, 1, 0);//P1's game
-	let mut p2_game = Game::new(theme, width, height, 2, 1, 0);//P2's game
+	let mut p1_game = Game::new(theme, width, height, 1, true, 0);//P1's game
+	let mut p2_game = Game::new(theme, width, height, 2, true, 0);//P2's game
 
 	let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
 	p1_game.high_score = FromStr::from_str(&data).unwrap();
@@ -381,7 +379,7 @@ fn launch_game(theme: Color) {
 	    let factory2 = window.factory.clone();
 	    let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
    
-	        let mut game = Game::new(theme, width, height,1, 0, 0);//create a new single-player game
+	        let mut game = Game::new(theme, width, height,1, false, 0);//create a new single-player game
 
 			let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
 			game.high_score = FromStr::from_str(&data).unwrap();
