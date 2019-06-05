@@ -55,6 +55,7 @@ pub struct Game {//Game struct
     pub score: i32, // score for game
     pub high_score: i32, //high score for game
 
+
     game_over: bool,
     waiting_time: f64,
 }

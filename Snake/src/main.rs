@@ -14,6 +14,8 @@ Instructor: Professor Bart Massey
 7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
 8.) https://rustacean.net (Main Menu Image)
 9.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
+10.)https://www.youtube.com/watch?v=0zG1ahKOXNg (Field theme background music)
+11.)https://www.youtube.com/watch?v=bGFBL_FYF9o (Dungeon theme background music)
 -------------------------------------------------------------------------------
 
 */
@@ -272,6 +274,14 @@ fn launch_two_player_game(theme: Color) {
 		&c.draw_state,
 		c.transform.trans(540.0, 55.0),
 		g).unwrap(); 
+        text::Text::new_color(WHITE, 30)//display score
+		.draw(
+		&format!("P2 score: {}", p2_game.score),
+		&mut glyphs,
+		&c.draw_state,
+		c.transform.trans(1000.0, 55.0),
+		g).unwrap();
+		//});
 		    });
 
 
