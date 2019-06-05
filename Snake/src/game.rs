@@ -48,8 +48,6 @@ pub struct Game {//Game struct
 
     width: i32,
     height: i32,
-    player_shift: i32, //shift game for two-p mode
-    origin_x: i32, // 0 or width
 
     obs_exists: bool,
     obs_x: i32,
@@ -58,38 +56,31 @@ pub struct Game {//Game struct
     pub score: i32, // score for game
     pub high_score: i32, //high score for game
 
-
     game_over: bool,
     waiting_time: f64,
 }
 
 impl Game {//implementation method for the struct game
-
-    pub fn new(theme: Color, width: i32, height: i32, player_shift: i32) -> Game {//instatiates new game
-
+    pub fn new(_theme: Color, width: i32, height: i32) -> Game {//instatiates new game
         Game {
-            snake: Snake::new(2+(player_shift-1)*width, 2),//snake starts at 2,2 (top left corner)
+            snake: Snake::new(2, 2),//snake starts at 2,2 (top left corner)
             waiting_time: 0.0,//snake automatically starts moving
      //       theme,
             food_exists: true,//food will spawn at below x and y (6 and 4 coord)
-            food_x: 6+(player_shift-1)*width,
+            food_x: 6,
             food_y: 4,
             food_type: "apple".to_string(),
             width, // size of board
             height,
-
-            obs_x: 25+(player_shift-1)*width,
-            obs_y: 5,
-
             obs_exists: false, //game will start without poison apple
-
+            obs_x: -1,
+            obs_y: -1,
             score: 0, // score
             high_score: 0, //high score
-            game_over: false, // when we hit wall this will be true
-            origin_x: (player_shift-1)*width, 
-            player_shift // shift game drawing for 2-player game
+            game_over: false // when we hit wall this will be true
         }
     }
+
 
 
     pub fn key_pressed(&mut self, key: Key) {//if game over then quit
@@ -99,13 +90,9 @@ impl Game {//implementation method for the struct game
 
         let dir = match key {//if key up then go up and etc
             Key::Up => Some(Direction::Up),
-            Key::W => Some(Direction::Up),
             Key::Down => Some(Direction::Down),
-            Key::S => Some(Direction::Down),
             Key::Left => Some(Direction::Left),
-            Key::A => Some(Direction::Left),
             Key::Right => Some(Direction::Right),
-            Key::D => Some(Direction::Right),
             _ => Some(self.snake.head_direction())
         };
 
@@ -142,14 +129,13 @@ impl Game {//implementation method for the struct game
 //        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y+1, con, g);
 //        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y+1, con, g);
 
-        
-        draw_rectangle(BORDER_COLOR, self.origin_x, 0, self.width, 1, con, g);//draws the borders
-        draw_rectangle(BORDER_COLOR, self.origin_x, self.height - 1, self.width, 1, con, g);
-        draw_rectangle(BORDER_COLOR, self.origin_x, 0, 1, self.height, con, g);
-        draw_rectangle(BORDER_COLOR, self.player_shift*(self.width - 2), 0, 1, self.height, con, g);   
+        draw_rectangle(BORDER_COLOR, 0, 0, self.width, 1, con, g);//draws the borders
+        draw_rectangle(BORDER_COLOR, 0, self.height - 1, self.width, 1, con, g);
+        draw_rectangle(BORDER_COLOR, 0, 0, 1, self.height, con, g);
+        draw_rectangle(BORDER_COLOR, self.width - 1, 0, 1, self.height, con, g);
 
         if self.game_over {//if game over then draw game over screen (in this case it is entire screen)
-            draw_rectangle(GAMEOVER_COLOR, 0, 0, self.width*self.player_shift, self.height, con, g);
+            draw_rectangle(GAMEOVER_COLOR, 0, 0, self.width, self.height, con, g);
         }
     }
 
@@ -235,14 +221,8 @@ impl Game {//implementation method for the struct game
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;//return false
         }
-        */
-
-
-        let result = next_x > self.origin_x && next_y > 0 && next_x < self.width - 1 + self.origin_x && next_y < self.height - 1; //if we go out of bounds
-
-
-       // let result = next_x > 0 && next_y > 0 && next_x < self.width - 1 && next_y < self.height - 1; //if we go out of bounds
-
+*/
+        let result = next_x > 0 && next_y > 0 && next_x < self.width - 1 && next_y < self.height - 1; //if we go out of bounds
         if result == false {
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;
@@ -267,7 +247,7 @@ impl Game {//implementation method for the struct game
             }
         }
 
-        self.food_x = new_x+self.origin_x;
+        self.food_x = new_x;
         self.food_y = new_y;
         self.food_exists = true;
         let temp_type = rng.gen_range(1,4);
@@ -418,18 +398,15 @@ impl Game {//implementation method for the struct game
     }
 
     fn restart(&mut self) {//this is similar to our new func but we don't want to call that because it will render a new window every reset
-        self.snake = Snake::new(2+self.origin_x, 2);//new board game
+        self.snake = Snake::new(2, 2);//new board game
         self.waiting_time = 0.0;//start automatically
         self.food_exists = true;//food is available immediately
-        self.food_x = 6+self.origin_x;//food will start here
+        self.food_x = 6;//food will start here
         self.food_y = 4;//food will start here
         self.food_type = "apple".to_string();
-
-        self.obs_x = 25+self.origin_x;
-        self.obs_y = 5;
-
         self.obs_exists = false; //no poison apple at first
-
+        self.obs_x = -1;
+        self.obs_y = -1;
         self.game_over = false;//game over is false
         self.score = 0; // reset score to 0
     }

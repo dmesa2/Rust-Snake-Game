@@ -14,8 +14,6 @@ Instructor: Professor Bart Massey
 7.) https://www.fontsquirrel.com/fonts/list/popular (Main Menu Font)
 8.) https://rustacean.net (Main Menu Image)
 9.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
-10.)https://www.youtube.com/watch?v=0zG1ahKOXNg (Field theme background music)
-11.)https://www.youtube.com/watch?v=bGFBL_FYF9o (Dungeon theme background music)
 -------------------------------------------------------------------------------
 
 */
@@ -80,7 +78,6 @@ const BEACH_THEME: Color = [0.0, 0.0, 0.5, 1.0];
 const DUNGEON_THEME: Color = [0.5, 0.5, 0.5, 1.0];
 const FIELD_THEME: Color = [0.0, 0.9, 0.0, 0.8];
 static mut MOVING_PERIOD: f64 = 0.0;
-static mut NUM_PLAYERS: i32 = 1;
 static mut THEME: Color = [0.0, 0.0, 0.0, 0.0];
 static mut THEME_SONG: &str = "./sounds/beach_theme.wav";
 
@@ -184,120 +181,13 @@ fn main() {
 		    MOVING_PERIOD = level_result;
 		}
 	    }
-	    let mut player_menu: PistonWindow = WindowSettings::new("Players", [to_coord_u32(30),to_coord_u32(20)]).exit_on_esc(true).build().unwrap();
-	    let factory = player_menu.factory.clone();
-	    let mut glyphs2 = Glyphs::new(font, factory,TextureSettings::new()).unwrap();
-	    let background_image2: G2dTexture = Texture::from_path(&mut player_menu.factory,&background_image0,Flip::None,&TextureSettings::new()).unwrap();
-
-
-	    while let Some(e) = player_menu.next() {
-		player_menu.draw_2d(&e, |c, g| {
-		    clear([1.0,1.0,1.0,1.0], g);
-		    image(&background_image2, c.transform.scale(0.625,0.6), g);
-		    text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("THE SNAKE GAME (RUST CS410P VERSION)",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,100.0),g).unwrap();
-		    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 1 for ONE player",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,150.0),g).unwrap();
-		    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 2 for TWO players",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,200.0),g).unwrap();
-			text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 4 to EXIT",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,300.0),g).unwrap();
-		//	text::Text::new_color([0.0,0.0,0.0,1.0],20).draw(&format!("Current score to beat: {}", data),&mut glyphs2,&c.draw_state,c.transform.trans(10.0,300.0),g).unwrap();
-
-		 });
-		   if let Some(Button::Keyboard(players)) = e.press_args() {
-		   let num_players = match players {
-			Key::D1 => Some(1),
-			Key::D2 => Some(2),
-			Key::D4 => process::exit(0x0100),
-			Key::NumPad1 => Some(1),
-			Key::NumPad2 => Some(2), 
-			Key::NumPad4 =>  process::exit(0x0100),
-			_ => Some(1),
-		    };
-		    let num_players_result = num_players.unwrap();
-		    unsafe {
-                        NUM_PLAYERS = num_players_result;
-		    }
 	 
-          if num_players_result == 1 {
-              launch_game(theme);
-          }
-          else {
-              launch_two_player_game(theme);
-          }
-     } }}}}
+          launch_game(theme);
+     } }}
 
  }
 
 }
-
-fn launch_two_player_game(theme: Color) {
-        let (width, height) = (30, 30);
-
-
-        let mut window: PistonWindow =
-	  WindowSettings::new("Two-player Snake", [to_coord_u32(width*2), to_coord_u32(height)])//creates a new window
-	    .exit_on_esc(true)//if we hit esc key then we will exit the game
-	    .build()
-	    .unwrap();//deals with any errors that may come along
-
-        let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
-        let ref font = assets.join("Roboto-Regular.ttf");
-        let factory2 = window.factory.clone();
-        let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
-   
-	let mut p1_game = Game::new(theme, width, height, 1);//create a new game
-	let mut p2_game = Game::new(theme, width, height, 2);//create a new game
-
-	let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
-	p1_game.high_score = FromStr::from_str(&data).unwrap();
-
-	music::start::<BackgroundMusic, SoundEffect, _>(16, || {
-	unsafe {
-	    music::bind_music_file(BackgroundMusic::ThemeSong, THEME_SONG);
-	}
-	music::bind_sound_file(SoundEffect::Eat, "./sounds/eat.wav");
-	music::bind_sound_file(SoundEffect::Die, "./sounds/die.wav");
-	music::set_volume(music::MAX_VOLUME);
-	music::play_music(&BackgroundMusic::ThemeSong, music::Repeat::Forever);
-
-	while let Some(event) = window.next() {//cleans up window
-	    if let Some(Button::Keyboard(key)) = event.press_args() {//if button is pushed
-                
-                if key == Key::A || key == Key::S || key == Key::D || key == Key::W {
-		  p2_game.key_pressed(key);//pass the key
-                }
-                else {
-                  p1_game.key_pressed(key);
-                }
-	    }
-	    window.draw_2d(&event, |c, g| {//else draw 2d window
-		clear(theme, g);//clear window
-		p1_game.draw(&c, g);//draw game
-		p2_game.draw(&c, g);//draw game
-
-	    text::Text::new_color(WHITE, 30)//display score
-		.draw(
-		&format!("P1 score: {}", p1_game.score),
-		&mut glyphs,
-		&c.draw_state,
-		c.transform.trans(540.0, 55.0),
-		g).unwrap(); 
-        text::Text::new_color(WHITE, 30)//display score
-		.draw(
-		&format!("P2 score: {}", p2_game.score),
-		&mut glyphs,
-		&c.draw_state,
-		c.transform.trans(1000.0, 55.0),
-		g).unwrap();
-		//});
-		    });
-
-
-	    event.update(|arg| {
-		p1_game.update(arg.dt);//delta time in seconds and arg is just a piston window (library stuff)
-		p2_game.update(arg.dt);//delta time in seconds and arg is just a piston window (library stuff)
-	    });
-	  }
-	 });
-}     
 
 fn launch_game(theme: Color) {
 	    let (width, height) = (30, 30);
@@ -314,7 +204,7 @@ fn launch_game(theme: Color) {
             //let mut factory4 = window.factory.clone();
 	    let mut glyphs = Glyphs::new(font, factory3,TextureSettings::new()).unwrap();
    
-	        let mut game = Game::new(theme, width, height,1);//create a new game
+	        let mut game = Game::new(theme, width, height);//create a new game
 
 			let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
 			game.high_score = FromStr::from_str(&data).unwrap();
