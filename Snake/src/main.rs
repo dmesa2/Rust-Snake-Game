@@ -144,6 +144,7 @@ fn main() {
     let mut glyphs2 = Glyphs::new(font, factory,TextureSettings::new()).unwrap();
     let background_image2: G2dTexture = Texture::from_path(&mut menu.factory,&background_image0,Flip::None,&TextureSettings::new()).unwrap();
 
+//	let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
 
     while let Some(e) = menu.next() {
 	menu.draw_2d(&e, |c, g| {
@@ -154,6 +155,7 @@ fn main() {
 	    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 2 to play level MEDIUM",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,200.0),g).unwrap();
 	    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 3 to play level DIFFICULT",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,250.0),g).unwrap();
 		text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 4 to EXIT",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,300.0),g).unwrap();
+	//	text::Text::new_color([0.0,0.0,0.0,1.0],20).draw(&format!("Current score to beat: {}", data),&mut glyphs2,&c.draw_state,c.transform.trans(10.0,300.0),g).unwrap();
 
 	 });
 	   if let Some(Button::Keyboard(number)) = e.press_args() {
@@ -186,8 +188,7 @@ fn main() {
 		    image(&background_image2, c.transform.scale(0.625,0.6), g);
 		    text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("THE SNAKE GAME (RUST CS410P VERSION)",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,100.0),g).unwrap();
 		    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 1 for ONE player",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,150.0),g).unwrap();
-		    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 2 for TWO players (split screen)",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,200.0),g).unwrap();
-		    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 3 for TWO players (melee)",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,250.0),g).unwrap();
+		    text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 2 for TWO players",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,200.0),g).unwrap();
 			text::Text::new_color([0.0,0.0,1.0,1.0],20).draw("Press 4 to EXIT",&mut glyphs2,&c.draw_state,c.transform.trans(10.0,300.0),g).unwrap();
 		//	text::Text::new_color([0.0,0.0,0.0,1.0],20).draw(&format!("Current score to beat: {}", data),&mut glyphs2,&c.draw_state,c.transform.trans(10.0,300.0),g).unwrap();
 
@@ -196,11 +197,9 @@ fn main() {
 		   let num_players = match players {
 			Key::D1 => Some(1),
 			Key::D2 => Some(2),
-            Key::D3 => Some(3),
 			Key::D4 => process::exit(0x0100),
 			Key::NumPad1 => Some(1),
 			Key::NumPad2 => Some(2), 
-            Key::NumPad3 => Some(3),
 			Key::NumPad4 =>  process::exit(0x0100),
 			_ => Some(1),
 		    };
@@ -212,86 +211,14 @@ fn main() {
           if num_players_result == 1 {
               launch_game(theme);
           }
-          else if num_players_result == 2 {
-              launch_two_player_game(theme);
-          }
           else {
-              launch_melee(theme);
+              launch_two_player_game(theme);
           }
      } }}}}
 
  }
 
 }
-fn launch_melee(theme: Color) {
-	    let (width, height) = (30, 30);
-
-	    let mut window: PistonWindow =
-		WindowSettings::new("Snake", [to_coord_u32(width), to_coord_u32(height)])//creates a new window
-		    .exit_on_esc(true)//if we hit esc key then we will exit the game
-		    .build()
-		    .unwrap();//deals with any errors that may come along
-	    let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
-	    let ref font = assets.join("Roboto-Regular.ttf");
-	    let factory2 = window.factory.clone();
-	    let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
-   
-	        let mut p1_game = Game::new(theme, width, height,1, true,0);//
-	        let mut p2_game = Game::new(theme, width, height,1, true,1);//create a new single-player game
-
-			let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
-			p1_game.high_score = FromStr::from_str(&data).unwrap();
-
-	        music::start::<BackgroundMusic, SoundEffect, _>(16, || {
-                unsafe {
-		    music::bind_music_file(BackgroundMusic::ThemeSong, THEME_SONG);
-                }
-		music::bind_sound_file(SoundEffect::Eat, "./sounds/eat.wav");
-		music::bind_sound_file(SoundEffect::Die, "./sounds/die.wav");
-		music::set_volume(music::MAX_VOLUME);
-		music::play_music(&BackgroundMusic::ThemeSong, music::Repeat::Forever);
-
-		while let Some(event) = window.next() {//cleans up window
-	    if let Some(Button::Keyboard(key)) = event.press_args() {//if button is pushed
-                
-                if key == Key::A || key == Key::S || key == Key::D || key == Key::W { // P1 uses ASDW (left side of window)
-		  p1_game.key_pressed(key);//pass the key
-                }
-                else {
-                  p2_game.key_pressed(key);					      // P2 uses arrow keys (Right side of screen)
-                }
-	    }
-	    window.draw_2d(&event, |c, g| {//else draw 2d window
-		clear(theme, g);//clear window
-		p1_game.draw(&c, g);//draw game
-		p2_game.draw(&c, g);//draw game
-
-	    text::Text::new_color(WHITE, 30)//display score
-		.draw(
-		&format!("P1 score: {}", p1_game.score),
-		&mut glyphs,
-		&c.draw_state,
-		c.transform.trans(500.0, 55.0),
-		g).unwrap(); 
-		    
-
-	    text::Text::new_color(WHITE, 30)//display score
-		.draw(
-		&format!("P2 score: {}", p2_game.score),
-		&mut glyphs,
-		&c.draw_state,
-		c.transform.trans(1000.0, 55.0),
-		g).unwrap(); 
-		});
-
-
-	    event.update(|arg| {
-		p1_game.update(arg.dt);//delta time in seconds and arg is just a piston window (library stuff)
-		p2_game.update(arg.dt);//delta time in seconds and arg is just a piston window (library stuff)
-	    });
-		}
-                 });
-}     
 
 fn launch_two_player_game(theme: Color) {
         let (width, height) = (30, 30);
@@ -308,8 +235,8 @@ fn launch_two_player_game(theme: Color) {
         let factory2 = window.factory.clone();
         let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
    
-	let mut p1_game = Game::new(theme, width, height, 1, true, 0);//P1's game
-	let mut p2_game = Game::new(theme, width, height, 2, true, 0);//P2's game
+	let mut p1_game = Game::new(theme, width, height, 1);//create a new game
+	let mut p2_game = Game::new(theme, width, height, 2);//create a new game
 
 	let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
 	p1_game.high_score = FromStr::from_str(&data).unwrap();
@@ -326,11 +253,11 @@ fn launch_two_player_game(theme: Color) {
 	while let Some(event) = window.next() {//cleans up window
 	    if let Some(Button::Keyboard(key)) = event.press_args() {//if button is pushed
                 
-                if key == Key::A || key == Key::S || key == Key::D || key == Key::W { // P1 uses ASDW (left side of window)
-		  p1_game.key_pressed(key);//pass the key
+                if key == Key::A || key == Key::S || key == Key::D || key == Key::W {
+		  p2_game.key_pressed(key);//pass the key
                 }
                 else {
-                  p2_game.key_pressed(key);					      // P2 uses arrow keys (Right side of screen)
+                  p1_game.key_pressed(key);
                 }
 	    }
 	    window.draw_2d(&event, |c, g| {//else draw 2d window
@@ -343,18 +270,9 @@ fn launch_two_player_game(theme: Color) {
 		&format!("P1 score: {}", p1_game.score),
 		&mut glyphs,
 		&c.draw_state,
-		c.transform.trans(500.0, 55.0),
+		c.transform.trans(540.0, 55.0),
 		g).unwrap(); 
-		    
-
-	    text::Text::new_color(WHITE, 30)//display score
-		.draw(
-		&format!("P2 score: {}", p2_game.score),
-		&mut glyphs,
-		&c.draw_state,
-		c.transform.trans(1000.0, 55.0),
-		g).unwrap(); 
-		});
+		    });
 
 
 	    event.update(|arg| {
@@ -379,7 +297,7 @@ fn launch_game(theme: Color) {
 	    let factory2 = window.factory.clone();
 	    let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
    
-	        let mut game = Game::new(theme, width, height,1, false, 0);//create a new single-player game
+	        let mut game = Game::new(theme, width, height,1);//create a new game
 
 			let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
 			game.high_score = FromStr::from_str(&data).unwrap();
@@ -417,3 +335,86 @@ fn launch_game(theme: Color) {
 		  }
                  });
 }     
+/*
+
+fn main() {
+
+
+    let mut menu: PistonWindow = WindowSettings::new("Main Menu", [to_coord_u32(30),to_coord_u32(20)]).exit_on_esc(true).build().unwrap();
+    let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
+    let ref font = assets.join("Roboto-Regular.ttf");
+    let factory = menu.factory.clone();
+    let mut glyphs = Glyphs::new(font, factory,TextureSettings::new()).unwrap();
+    let background_image = assets.join("rustacean-orig-noshadow.png");
+    let background_image: G2dTexture = Texture::from_path(&mut menu.factory,&background_image,Flip::None,&TextureSettings::new()).unwrap();
+    while let Some(e) = menu.next() {
+        menu.draw_2d(&e, |c, g| {
+            clear([1.0,1.0,1.0,1.0], g);
+            image(&background_image, c.transform.scale(0.625,0.6), g);
+            text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("THE SNAKE GAME (RUST CS410P VERSION)",&mut glyphs,&c.draw_state,c.transform.trans(10.0,100.0),g).unwrap();
+            text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("Press 1 to play level EASY",&mut glyphs,&c.draw_state,c.transform.trans(20.0,200.0),g).unwrap();
+            text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("Press 2 to play level MEDIUM",&mut glyphs,&c.draw_state,c.transform.trans(20.0,300.0),g).unwrap();
+            text::Text::new_color([0.0,0.0,1.0,1.0],32).draw("Press 3 to play level DIFFICULT",&mut glyphs,&c.draw_state,c.transform.trans(20.0,400.0),g).unwrap();
+        });
+        if let Some(Button::Keyboard(number)) = e.press_args() {
+	   let level = match number {
+		Key::D1 => Some(0.17),
+		Key::D2 => Some(0.12),
+		Key::D3 => Some(0.05),
+                Key::NumPad1 => Some(0.17),
+                Key::NumPad2 => Some(0.12),
+                Key::NumPad3 => Some(0.05),
+                _ => Some(0.1),
+	    };
+            let result = level.unwrap();
+            unsafe {
+                if result > 0.0 {
+                    MOVING_PERIOD = result;
+                }
+            }
+            
+	    let (width, height) = (30, 30);
+
+	    let mut window: PistonWindow =
+		WindowSettings::new("Snake", [to_coord_u32(width), to_coord_u32(height)])//creates a new window
+		    .exit_on_esc(true)//if we hit esc key then we will exit the game
+		    .build()
+		    .unwrap();//deals with any errors that may come along
+
+	    let mut game = Game::new(width, height);//create a new game
+
+	    music::start::<BackgroundMusic, SoundEffect, _>(16, || {
+		music::bind_music_file(BackgroundMusic::ThemeSong, "./sounds/theme.wav");
+		music::bind_sound_file(SoundEffect::Eat, "./sounds/eat.wav");
+		music::bind_sound_file(SoundEffect::Die, "./sounds/die.wav");
+		music::set_volume(music::MAX_VOLUME);
+		music::play_music(&BackgroundMusic::ThemeSong, music::Repeat::Forever);
+
+        while let Some(event) = window.next() {//cleans up window - every time snake moves window is cleaned
+
+		    if let Some(Button::Keyboard(key)) = event.press_args() {//if button is pushed
+			game.key_pressed(key);//pass the key
+		    }
+		    window.draw_2d(&event, |c, g| {//else draw 2d window
+			clear(BACK_COLOR, g);//clear window
+			game.draw(&c, g);//draw game
+
+            text::Text::new_color(WHITE, 30)//display score
+                .draw(
+                &format!("Score: {}", game.score),
+                &mut glyphs,
+                &c.draw_state,
+                c.transform.trans(540.0, 55.0),
+                g).unwrap(); 
+		    });
+
+		    event.update(|arg| {
+			game.update(arg.dt);//delta time in seconds and arg is just a piston window (library stuff)
+		    });
+		}
+	    });
+        }
+    }
+
+}
+*/

@@ -54,34 +54,30 @@ pub struct Game {//Game struct
 
     pub score: i32, // score for game
     pub high_score: i32, //high score for game
-    pub multiplayer: bool,
-    pub melee: i32,
 
     game_over: bool,
     waiting_time: f64,
 }
 
 impl Game {//implementation method for the struct game
-    pub fn new(theme: Color, width: i32, height: i32, player_shift: i32, multiplayer: bool, melee: i32) -> Game {//instatiates new game
+    pub fn new(theme: Color, width: i32, height: i32, player_shift: i32) -> Game {//instatiates new game
         Game {
-            snake: Snake::new(2+(player_shift-1)*width, 2+(melee * 20)),//snake starts at 2,2 (top left corner)
+            snake: Snake::new(2+(player_shift-1)*width, 2),//snake starts at 2,2 (top left corner)
             waiting_time: 0.0,//snake automatically starts moving
             theme,
             food_exists: true,//food will spawn at below x and y (6 and 4 coord)
             food_x: 6+(player_shift-1)*width,
-            food_y: 4+(melee * 20),
+            food_y: 4,
             food_type: "apple".to_string(),
             width, // size of board
             height,
             obs_x: 25+(player_shift-1)*width,
-            obs_y: 5 +(melee * 20),
+            obs_y: 5,
             score: 0, // score
             high_score: 0, //high score
             game_over: false, // when we hit wall this will be true
             origin_x: (player_shift-1)*width, 
-            player_shift, // shift game drawing for 2-player game
-            multiplayer,
-            melee
+            player_shift // shift game drawing for 2-player game
         }
     }
 
@@ -137,7 +133,7 @@ impl Game {//implementation method for the struct game
         draw_rectangle(BORDER_COLOR, self.player_shift*(self.width - 2), 0, 1, self.height, con, g);   
 
         if self.game_over {//if game over then draw game over screen (in this case it is entire screen)
-            draw_rectangle(GAMEOVER_COLOR, self.origin_x, 0, self.width, self.height, con, g);
+            draw_rectangle(GAMEOVER_COLOR, 0, 0, self.width*self.player_shift, self.height, con, g);
         }
     }
 
@@ -214,8 +210,9 @@ impl Game {//implementation method for the struct game
         let result = next_x > self.origin_x && next_y > 0 && next_x < self.width - 1 + self.origin_x && next_y < self.height - 1; //if we go out of bounds
         if result == false {
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
+            return false;
         }
-        return result;
+        return true;
     }
 
     fn add_food(&mut self) {//adding food
@@ -229,7 +226,7 @@ impl Game {//implementation method for the struct game
         }
 
         self.food_x = new_x+self.origin_x;
-        self.food_y = new_y+(self.melee*20);
+        self.food_y = new_y;
         self.food_exists = true;
         let temp_type = rng.gen_range(1,4);
         if temp_type == 1 {
@@ -249,17 +246,8 @@ impl Game {//implementation method for the struct game
             self.snake.move_forward(dir);//then move snake forward
             self.check_eating(); //if snake ate a fruit
         } else {
-            let opp = match self.player_shift {
-                1 => 2,
-                2 => 1,
-                _ => 1,
-            };
-            let window_title = match self.multiplayer {
-                true => format!("Player {} Wins!", opp),  
-                false => format!("Player {} Wins!", self.player_shift),
-            };
             let mut window: PistonWindow =
-            WindowSettings::new(window_title.clone(), [375; 2])
+            WindowSettings::new("Game Over!", [375; 2])
             .build().unwrap();
             let assets = find_folder::Search::ParentsThenKids(3, 3).for_folder("assets").unwrap();
             let ref font = assets.join("FiraSans-Regular.ttf");
@@ -276,15 +264,6 @@ impl Game {//implementation method for the struct game
                     window.draw_2d(&e, |c, g| {
                     clear([0.5, 0.5, 0.5, 1.0], g);
 
-
-                    text::Text::new_color(BLACK, 25)
-                    .draw(
-                    &format!("{}", window_title),
-                    &mut glyphs,
-                    &c.draw_state,
-                    c.transform.trans(93.0, 100.0),
-                    g).unwrap();
-
                     text::Text::new_color(BLACK, 25)
                     .draw(
                     &format!("New High Score: {}", self.score),
@@ -298,20 +277,20 @@ impl Game {//implementation method for the struct game
                     &format!("Choose from the below menu:"),
                     &mut glyphs,
                     &c.draw_state,
-                    c.transform.trans(80.0, 200.0),
+                    c.transform.trans(40.0, 200.0),
                     g).unwrap();
 
                     text::Text::new_color(BLUE,20)
                     .draw("Press 1 to Play Again",
                     &mut glyphs,
                     &c.draw_state,
-                    c.transform.trans(80.0,250.0),
+                    c.transform.trans(40.0,250.0),
                     g).unwrap();
 
 	                text::Text::new_color(BLUE,20)
                     .draw("Press 2 to Quit",
                     &mut glyphs,&c.draw_state,
-                    c.transform.trans(80.0,300.0),
+                    c.transform.trans(40.0,300.0),
                     g).unwrap();
                     });
 
@@ -331,14 +310,6 @@ impl Game {//implementation method for the struct game
             while let Some(e) = window.next() {//Game over menu
                 window.draw_2d(&e, |c, g| {
                     clear([0.5, 0.5, 0.5, 1.0], g);
-
-                    text::Text::new_color(BLACK, 25)
-                    .draw(
-                    &format!("{}", window_title),
-                    &mut glyphs,
-                    &c.draw_state,
-                    c.transform.trans(93.0, 100.0),
-                    g).unwrap();
 
                     text::Text::new_color(BLACK, 25)
                     .draw(
