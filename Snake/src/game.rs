@@ -1,7 +1,7 @@
 extern crate piston_window;
 extern crate find_folder;
 
-use crate::main;
+//use crate::main;
 
 use std::process;
 use piston_window::*;//import all of piston 
@@ -13,10 +13,12 @@ use crate::MOVING_PERIOD;
 use crate::snake::{Direction, Snake};//bring in snake
 use crate::draw::{draw_block, draw_rectangle};//bringing in draw
 
-use std::fs;
+//use std::fs;
 
 use std::fs::File;
 use std::io::Write;
+
+//use gfx_device_gl::Factory;
 
 const APPLE_COLOR: Color = [0.80, 0.00, 0.00, 1.0]; // 80% red with 100% opacity
 const BERRY_COLOR: Color = [0.80, 0.00, 0.80, 1.0]; // 80% red, 80% blue with 100% opacity
@@ -24,7 +26,7 @@ const ORANGE_COLOR: Color = [0.80, 0.50, 0.00, 1.0];
 const BORDER_COLOR: Color = [0.00, 0.00, 0.00, 1.0]; // Dark black border
 const GAMEOVER_COLOR: Color = [0.90, 0.00, 0.00, 0.5];//Game Over screen - red but with 50% opacit
 const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//black color
-const RED: Color = [1.0, 0.0, 0.0, 1.0]; //red color
+//const RED: Color = [1.0, 0.0, 0.0, 1.0]; //red color
 const BLUE: Color = [0.0,0.0,1.0,1.0]; //blue color
 //const MOVING_PERIOD: f64 = 0.1; //Snake's speed (FPS) -  We can adjust this 3 times for difficulty!
 const RESTART_TIME: f64 = 1.0; //Amount of time between failure state and next game (1 second)
@@ -38,7 +40,7 @@ pub enum SoundEffect {
 pub struct Game {//Game struct
     snake: Snake,
 
-    theme: Color,
+    //theme: Color,
     food_exists: bool,
     food_x: i32,
     food_y: i32,
@@ -49,6 +51,7 @@ pub struct Game {//Game struct
     player_shift: i32, //shift game for two-p mode
     origin_x: i32, // 0 or width
 
+    obs_exists: bool,
     obs_x: i32,
     obs_y: i32,
 
@@ -61,19 +64,25 @@ pub struct Game {//Game struct
 }
 
 impl Game {//implementation method for the struct game
+
     pub fn new(theme: Color, width: i32, height: i32, player_shift: i32) -> Game {//instatiates new game
+
         Game {
             snake: Snake::new(2+(player_shift-1)*width, 2),//snake starts at 2,2 (top left corner)
             waiting_time: 0.0,//snake automatically starts moving
-            theme,
+     //       theme,
             food_exists: true,//food will spawn at below x and y (6 and 4 coord)
             food_x: 6+(player_shift-1)*width,
             food_y: 4,
             food_type: "apple".to_string(),
             width, // size of board
             height,
+
             obs_x: 25+(player_shift-1)*width,
             obs_y: 5,
+
+            obs_exists: false, //game will start without poison apple
+
             score: 0, // score
             high_score: 0, //high score
             game_over: false, // when we hit wall this will be true
@@ -108,6 +117,8 @@ impl Game {//implementation method for the struct game
     }
 
     pub fn draw(&self, con: &Context, g: &mut G2d) {
+//    pub fn draw(&self, con: &Context, g: &mut G2d, factory: &mut Factory) {
+//        self.snake.draw(con, g, factory);//iterates through linked list
         self.snake.draw(con, g);//iterates through linked list
 
         if self.food_exists {//draw block
@@ -121,11 +132,15 @@ impl Game {//implementation method for the struct game
                 draw_block(ORANGE_COLOR, self.food_x, self.food_y, con, g);
             }
         }
+        
+        if self.obs_exists { //draw poison apple if it exists
+            draw_block([0.3,0.0,0.3,1.0], self.obs_x,self.obs_y,con,g);
+        }
  
-        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y, con, g);
-        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y, con, g);
-        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y+1, con, g);
-        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y+1, con, g);
+//        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y, con, g);
+//        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y, con, g);
+//        draw_block([0.5,0.5,0.0,1.0], self.obs_x, self.obs_y+1, con, g);
+//        draw_block([0.5,0.5,0.0,1.0], self.obs_x+1, self.obs_y+1, con, g);
 
         
         draw_rectangle(BORDER_COLOR, self.origin_x, 0, self.width, 1, con, g);//draws the borders
@@ -157,7 +172,11 @@ impl Game {//implementation method for the struct game
             self.add_food();
         }
 
-        unsafe {
+        if !self.obs_exists { //try to add poison apple if it doesn't exist
+            self.add_obs();
+        }
+
+        unsafe { //Use of mutable static requires unsafe block here
             if self.waiting_time > MOVING_PERIOD {//update snake if this is true
                 self.update_snake(None);
             }
@@ -178,9 +197,15 @@ impl Game {//implementation method for the struct game
             }
             else if self.food_type == "orange".to_string() {
                 self.snake.cut_in_half();
-                self.count_up_score(1);
+                //self.count_up_score(1);
             }
         }
+    }
+
+    fn check_obs(&mut self) { //remove poison apple if score is divisible by 5 (and not divisible by 20)
+        if self.score % 5 == 0 && self.score % 20 != 0 {
+            self.obs_exists = false;
+        }	
     }
 
     fn check_if_snake_alive(&self, dir: Option<Direction>) -> bool {//check if snake is alive
@@ -190,11 +215,14 @@ impl Game {//implementation method for the struct game
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;//return false
         }
-
-        if self.snake.overlap_tail(self.obs_x, self.obs_y) {//if snake runs into obstacle
-            music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
-            return false;//return false
+        
+        if self.obs_exists {
+            if self.snake.overlap_tail(self.obs_x, self.obs_y) {//if snake eats poison apple
+                music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
+                return false;//return false
+            }
         }
+/*
         if self.snake.overlap_tail(self.obs_x+1, self.obs_y) {//if snake runs into obstacle
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;//return false
@@ -207,8 +235,14 @@ impl Game {//implementation method for the struct game
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;//return false
         }
+        */
+
 
         let result = next_x > self.origin_x && next_y > 0 && next_x < self.width - 1 + self.origin_x && next_y < self.height - 1; //if we go out of bounds
+
+
+       // let result = next_x > 0 && next_y > 0 && next_x < self.width - 1 && next_y < self.height - 1; //if we go out of bounds
+
         if result == false {
             music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
             return false;
@@ -221,9 +255,16 @@ impl Game {//implementation method for the struct game
 
         let mut new_x = rng.gen_range(1, self.width - 1);
         let mut new_y = rng.gen_range(1, self.height - 1);
-        while self.snake.overlap_tail(new_x, new_y) {//we don't want snake to overlap with apple
-            new_x = rng.gen_range(1, self.width - 1);
-            new_y = rng.gen_range(1, self.height - 1);
+        if self.obs_exists {
+            while self.snake.overlap_tail(new_x, new_y) || (new_x == self.obs_x && new_y == self.obs_y) {//we don't want snake to overlap with apple or obstacle
+                new_x = rng.gen_range(1, self.width - 1);
+                new_y = rng.gen_range(1, self.height - 1);
+            }
+        } else {
+            while self.snake.overlap_tail(new_x, new_y) {//we don't want snake to overlap with apple
+                new_x = rng.gen_range(1, self.width - 1);
+                new_y = rng.gen_range(1, self.height - 1);
+            }
         }
 
         self.food_x = new_x+self.origin_x;
@@ -241,11 +282,29 @@ impl Game {//implementation method for the struct game
         }
     }
 
+    fn add_obs(&mut self) { //add poison apple
+        let mut rng = thread_rng();
+
+        let mut new_x = rng.gen_range(1, self.width - 1);
+        let mut new_y = rng.gen_range(1, self.height - 1);
+        while self.snake.overlap_tail(new_x, new_y) && (new_x == self.food_x && new_y == self.food_y) {//we don't want snake to overlap with apple or obstacle
+            new_x = rng.gen_range(1, self.width - 1);
+            new_y = rng.gen_range(1, self.height - 1);
+        }
+
+        if self.score >= 20 && self.score % 20 == 0 {
+            self.obs_x = new_x;
+            self.obs_y = new_y;
+            self.obs_exists = true;
+        }
+    }
+
     fn update_snake(&mut self, dir: Option<Direction>) {
 
         if self.check_if_snake_alive(dir) {//if snake is alive
             self.snake.move_forward(dir);//then move snake forward
             self.check_eating(); //if snake ate a fruit
+            self.check_obs(); //check if poison apple can be removed
         } else {
             let mut window: PistonWindow =
             WindowSettings::new("Game Over!", [375; 2])
@@ -297,7 +356,7 @@ impl Game {//implementation method for the struct game
 
                 if let Some(Button::Keyboard(theme)) = e.press_args() {
 
-                let theme = match theme {
+                let _theme = match theme {
 		        Key::D1 => window.set_should_close(true),
 		        Key::D2 => process::exit(0x0100),
 		        Key::NumPad1 => window.set_should_close(true),
@@ -343,7 +402,7 @@ impl Game {//implementation method for the struct game
                 });
             if let Some(Button::Keyboard(theme)) = e.press_args() {
 
-            let theme = match theme {
+            let _theme = match theme {
 		        Key::D1 => window.set_should_close(true),
 		        Key::D2 => process::exit(0x0100),
 		        Key::NumPad1 => window.set_should_close(true),
@@ -365,9 +424,30 @@ impl Game {//implementation method for the struct game
         self.food_x = 6+self.origin_x;//food will start here
         self.food_y = 4;//food will start here
         self.food_type = "apple".to_string();
+
         self.obs_x = 25+self.origin_x;
         self.obs_y = 5;
+
+        self.obs_exists = false; //no poison apple at first
+
         self.game_over = false;//game over is false
         self.score = 0; // reset score to 0
     }
 }
+
+/*
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn check_food_gen() {
+        add_food();
+        assert_eq!(true,self.food_exists);
+    }
+
+    #[test]
+    fn check_obs_gen() {
+        add_obs();
+        assert_eq!(true,self.obs_exists);
+    }
+}
+*/

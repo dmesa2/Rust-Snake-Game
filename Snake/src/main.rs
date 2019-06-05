@@ -43,12 +43,15 @@ We are using the open source rust code from tensor-programming to build off of. 
         Feel free to add more to this list!*
 */
 
+//The following three lines are to get rid of compilation warnings
 #![allow(non_snake_case)]
+#![allow(illegal_floating_point_literal_pattern)]
 
 extern crate piston_window;
 extern crate rand;
 extern crate music;
 extern crate find_folder;
+extern crate gfx_device_gl;
 
 mod draw;//linking draw file
 mod snake;//linking snake file
@@ -57,7 +60,10 @@ mod game;//linking game file
 use piston_window::*;
 use piston_window::types::Color;
 
+//use gfx_device_gl::Factory;
+
 use std::process;
+//use std::borrow::BorrowMut;
 
 use game::Game;
 use draw::to_coord_u32;
@@ -67,9 +73,9 @@ use crate::game::SoundEffect;
 use std::fs;
 use std::str::FromStr;
 
-const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
+//const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
 const WHITE: Color = [1.0, 1.0, 1.0, 0.50];//white color
-const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//black color
+//const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//black color
 const BEACH_THEME: Color = [0.0, 0.0, 0.5, 1.0];
 const DUNGEON_THEME: Color = [0.5, 0.5, 0.5, 1.0];
 const FIELD_THEME: Color = [0.0, 0.9, 0.0, 0.8];
@@ -126,7 +132,7 @@ fn main() {
 		Key::NumPad1 => BEACH_THEME,
 		Key::NumPad2 => FIELD_THEME,
 		Key::NumPad3 => DUNGEON_THEME,
-		Key::NumPad3 => process::exit(0x0100),
+		Key::NumPad4 => process::exit(0x0100),
 		_ => BEACH_THEME,
 	    };
 	    
@@ -136,7 +142,7 @@ fn main() {
 		FIELD_THEME => "./sounds/field_theme.wav",
 		_ => "./sounds/beach_theme.wav",
 	     };     
-	   unsafe{
+	   unsafe{ //Use of mutable static is unsafe, so must use unsafe block here
 	      THEME = theme;
 	      THEME_SONG = theme_song;
 	   }
@@ -173,7 +179,7 @@ fn main() {
 		_ => Some(0.1),
 	    };
 	    let level_result = level.unwrap();
-	    unsafe {
+	    unsafe { //Use of mutable static is unsafe, so must use unsafe block here
 		if level_result > 0.0 {
 		    MOVING_PERIOD = level_result;
 		}
@@ -304,8 +310,9 @@ fn launch_game(theme: Color) {
 		    .unwrap();//deals with any errors that may come along
 	    let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
 	    let ref font = assets.join("Roboto-Regular.ttf");
-	    let factory2 = window.factory.clone();
-	    let mut glyphs = Glyphs::new(font, factory2,TextureSettings::new()).unwrap();
+	    let factory3 = window.factory.clone();
+            //let mut factory4 = window.factory.clone();
+	    let mut glyphs = Glyphs::new(font, factory3,TextureSettings::new()).unwrap();
    
 	        let mut game = Game::new(theme, width, height,1);//create a new game
 
@@ -327,6 +334,7 @@ fn launch_game(theme: Color) {
 		    }
 		    window.draw_2d(&event, |c, g| {//else draw 2d window
 			clear(theme, g);//clear window
+//			game.draw(&c, g, &mut factory4);//draw game
 			game.draw(&c, g);//draw game
 
 		    text::Text::new_color(WHITE, 30)//display score
@@ -345,6 +353,17 @@ fn launch_game(theme: Color) {
 		  }
                  });
 }     
+
+/*
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn check_file_init() {
+        let data = fs::read_to_string("highscore.txt").expect("Unable to read file");
+        assert_eq!("101".to_string(),data);
+    }
+}
+*/
 /*
 
 fn main() {

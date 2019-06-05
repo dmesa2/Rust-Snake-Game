@@ -1,8 +1,11 @@
 use std::collections::LinkedList;//allows us to push and pop from either end of the list
-use piston_window::{Context, G2d};//bringing in context and graphical buffer
+//use piston_window::{Context, G2d, Glyphs, TextureSettings, WindowSettings};//bringing in context and graphical buffer
+use piston_window::*;
 use piston_window::types::Color;//bringing in color
+//use gfx_device_gl::Factory;
 
 use crate::draw::draw_block;//bring in draw block from draw.rs file
+//use crate::draw::draw_crab;//bring in draw block from draw.rs file
 
 const SNAKE_COLOR: Color = [0.00, 0.80, 0.00, 1.0];//RGB, Opacity - So 80% green with 100% opacity
 #[derive(Copy, Clone, PartialEq)]
@@ -59,7 +62,13 @@ impl Snake {//implementing Snake
     }
 
     pub fn draw(&self, con: &Context, g: &mut G2d) {//Iterate through list and call draw block function
+//    pub fn draw(&self, con: &Context, g: &mut G2d, factory: &mut Factory) {//Iterate through list and call draw block function
+//        let assets = find_folder::Search::ParentsThenKids(0, 0).for_folder("assets").unwrap();
+//        let background_image0 = assets.join("rustacean-orig-noshadow.png");
+//        let background_image: G2dTexture = Texture::from_path(factory,&background_image0,Flip::None,&TextureSettings::new()).unwrap(); //PROBLEM LINE
+
         for block in &self.body {//Renders out green snake
+//            draw_crab(block.x.into(), block.y.into(), con, g, background_image.clone());
             draw_block(SNAKE_COLOR, block.x, block.y, con, g);
         }
     }
