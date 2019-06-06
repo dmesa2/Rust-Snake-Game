@@ -105,7 +105,7 @@ fn main() {
     let assets = find_folder::Search::ParentsThenKids(0, 0)
         .for_folder("assets")
         .unwrap();
-    let ref font = assets.join("Roboto-Regular.ttf");
+    let font = &assets.join("Roboto-Regular.ttf");
     let background_image0 = assets.join("rustacean-orig-noshadow.png");
 
     let factory2 = theme_menu.factory.clone();
@@ -391,7 +391,7 @@ fn launch_two_player_game(theme: Color) {
     let assets = find_folder::Search::ParentsThenKids(0, 0)
         .for_folder("assets")
         .unwrap();
-    let ref font = assets.join("Roboto-Regular.ttf");
+    let font = &assets.join("Roboto-Regular.ttf");
     let factory2 = window.factory.clone();
     let mut glyphs = Glyphs::new(font, factory2, TextureSettings::new()).unwrap();
 
@@ -467,7 +467,7 @@ fn launch_game(theme: Color) {
     let assets = find_folder::Search::ParentsThenKids(0, 0)
         .for_folder("assets")
         .unwrap();
-    let ref font = assets.join("Roboto-Regular.ttf");
+    let font = &assets.join("Roboto-Regular.ttf");
     let factory3 = window.factory.clone();
     //let mut factory4 = window.factory.clone();
     let mut glyphs = Glyphs::new(font, factory3, TextureSettings::new()).unwrap();

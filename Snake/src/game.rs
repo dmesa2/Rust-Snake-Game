@@ -124,11 +124,11 @@ impl Game {
 
         if self.food_exists {
             //draw block
-            if self.food_type == "apple".to_string() {
+            if self.food_type == "apple" {
                 draw_block(APPLE_COLOR, self.food_x, self.food_y, con, g);
-            } else if self.food_type == "berry".to_string() {
+            } else if self.food_type == "berry" {
                 draw_block(BERRY_COLOR, self.food_x, self.food_y, con, g);
-            } else if self.food_type == "orange".to_string() {
+            } else if self.food_type == "orange" {
                 draw_block(ORANGE_COLOR, self.food_x, self.food_y, con, g);
             }
         }
@@ -226,11 +226,11 @@ impl Game {
             );
             self.food_exists = false; //food doesn't exist anymore
             self.snake.restore_tail(); //our snake is going to grow one block
-            if self.food_type == "apple".to_string() {
+            if self.food_type == "apple" {
                 self.count_up_score(1); //add 1 to score
-            } else if self.food_type == "berry".to_string() {
+            } else if self.food_type == "berry" {
                 self.count_up_score(2); //add 2 to score
-            } else if self.food_type == "orange".to_string() {
+            } else if self.food_type == "orange" {
                 self.snake.cut_in_half();
                 //self.count_up_score(1);
             }
@@ -258,8 +258,7 @@ impl Game {
             return false; //return false
         }
 
-        if self.obs_exists {
-            if self.snake.overlap_tail(self.obs_x, self.obs_y) {
+            if self.obs_exists && self.snake.overlap_tail(self.obs_x, self.obs_y) {
                 //if snake eats poison apple
                 music::play_sound(
                     &SoundEffect::Die,
@@ -268,7 +267,6 @@ impl Game {
                 );
                 return false; //return false
             }
-        }
         /*
                 if self.snake.overlap_tail(self.obs_x+1, self.obs_y) {//if snake runs into obstacle
                     music::play_sound(&SoundEffect::Die, music::Repeat::Times(0), music::MAX_VOLUME);
@@ -287,7 +285,7 @@ impl Game {
             && next_y > 0
             && next_x < self.width - 1 + self.origin_x
             && next_y < self.height - 1; //if we go out of bounds
-        if result == false {
+        if !result{
             music::play_sound(
                 &SoundEffect::Die,
                 music::Repeat::Times(0),
@@ -295,7 +293,7 @@ impl Game {
             );
             return false;
         }
-        return true;
+        true
     }
 
     fn add_food(&mut self) {
@@ -366,7 +364,7 @@ impl Game {
             let assets = find_folder::Search::ParentsThenKids(3, 3)
                 .for_folder("assets")
                 .unwrap();
-            let ref font = assets.join("FiraSans-Regular.ttf");
+            let font = &assets.join("FiraSans-Regular.ttf");
             let factory = window.factory.clone();
             let mut glyphs = Glyphs::new(font, factory, TextureSettings::new()).unwrap();
 
@@ -422,7 +420,7 @@ impl Game {
                     });
 
                     if let Some(Button::Keyboard(theme)) = e.press_args() {
-                        let _theme = match theme {
+                        match theme {
                             Key::D1 => window.set_should_close(true),
                             Key::D2 => process::exit(0x0100),
                             Key::NumPad1 => window.set_should_close(true),
@@ -479,7 +477,7 @@ impl Game {
                         .unwrap();
                 });
                 if let Some(Button::Keyboard(theme)) = e.press_args() {
-                    let _theme = match theme {
+                    match theme {
                         Key::D1 => window.set_should_close(true),
                         Key::D2 => process::exit(0x0100),
                         Key::NumPad1 => window.set_should_close(true),

@@ -19,9 +19,9 @@ pub enum Direction {
 
 impl Direction {
     //Method for our direction enum
-    pub fn opposite(&self) -> Direction {
+    pub fn opposite(self) -> Direction {
         //So if snake is going up and we hit down then snake will not go down
-        match *self {
+        match self {
             /*We could potentially change this to allow the snake to move in whatever direction*/
             Direction::Up => Direction::Down,
             Direction::Down => Direction::Up,
@@ -94,10 +94,7 @@ impl Snake {
 
     pub fn move_forward(&mut self, dir: Option<Direction>) {
         //Match on dir, set direction to d
-        match dir {
-            Some(d) => self.direction = d,
-            None => (),
-        }
+        if let Some(d) = dir { self.direction = d };
 
         let (last_x, last_y): (i32, i32) = self.head_position();
 
@@ -136,10 +133,7 @@ impl Snake {
         let (head_x, head_y): (i32, i32) = self.head_position();
 
         let mut moving_dir = self.direction;
-        match dir {
-            Some(d) => moving_dir = d,
-            None => {}
-        }
+        if let Some(d) = dir { moving_dir = d };
 
         match moving_dir {
             Direction::Up => (head_x, head_y - 1),
@@ -166,7 +160,9 @@ impl Snake {
     pub fn overlap_tail(&self, x: i32, y: i32) -> bool {
         //This will check if tail overlaps and if so it will fail
         let mut ch = 0;
-        for block in &self.body {
+        for block in &self.body
+        {
+
             //iterate through body
             if x == block.x && y == block.y {
                 return true; //if snake overlaps return true
@@ -178,6 +174,6 @@ impl Snake {
                 break;
             }
         }
-        return false;
+        false
     }
 }

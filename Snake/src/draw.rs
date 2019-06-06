@@ -6,7 +6,7 @@ const BLOCK_SIZE: f64 = 25.0; //Blocks will scale up to 25 pixels
 
 pub fn to_coord(game_coord: i32) -> f64 {
     //Take in a coord and then cast it as f64 then mult by block size
-    (game_coord as f64) * BLOCK_SIZE
+    f64::from(game_coord) * BLOCK_SIZE
 }
 
 pub fn to_coord_u32(game_coord: i32) -> u32 {
@@ -44,8 +44,8 @@ pub fn draw_rectangle(
         [
             x,
             y,
-            BLOCK_SIZE * (width as f64), //cast Block Size by width and height and convert to f64
-            BLOCK_SIZE * (height as f64),
+            BLOCK_SIZE * f64::from(width), //cast Block Size by width and height and convert to f64
+            BLOCK_SIZE * f64::from(height),
         ],
         con.transform,
         g,
