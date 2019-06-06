@@ -49,6 +49,8 @@ extern crate piston_window;
 extern crate rand;
 extern crate music;
 extern crate find_folder;
+extern crate find_folder;
+extern crate gfx_device_gl;
 
 mod draw;//linking draw file
 mod snake;//linking snake file
@@ -67,9 +69,9 @@ use crate::game::SoundEffect;
 use std::fs;
 use std::str::FromStr;
 
-const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
+//const BACK_COLOR: Color = [0.5, 0.5, 0.5, 1.0];//back color will be gray
 const WHITE: Color = [1.0, 1.0, 1.0, 0.50];//white color
-const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//black color
+//const BLACK: Color = [0.0, 0.0, 0.0, 1.0];//black color
 const BEACH_THEME: Color = [0.0, 0.0, 0.5, 1.0];
 const DUNGEON_THEME: Color = [0.5, 0.5, 0.5, 1.0];
 const FIELD_THEME: Color = [0.0, 0.9, 0.0, 0.8];
