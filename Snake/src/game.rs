@@ -156,7 +156,7 @@ impl Game {
         draw_rectangle(BORDER_COLOR, self.origin_x, 0, 1, self.height, con, g);
         draw_rectangle(
             BORDER_COLOR,
-            self.player_shift * (self.width - 2),
+            self.player_shift * (self.width - 1) - (self.player_shift-1),
             0,
             1,
             self.height,
