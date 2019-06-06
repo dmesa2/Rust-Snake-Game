@@ -69,6 +69,8 @@ These features are commented at the top in the main.rs file.
 6.) https://www.fontsquirrel.com/fonts/list/popular(Main Menu Font)
 7.) https://rustacean.net (Main Menu Image)
 8.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
+10.)https://www.youtube.com/watch?v=0zG1ahKOXNg (Field theme background music)
+11.)https://www.youtube.com/watch?v=bGFBL_FYF9o (Dungeon theme background music)
 
 ## Project Writeup
 
