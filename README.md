@@ -62,15 +62,15 @@ Our main source for this project comes from tensor programming. We used this sou
 These features are commented at the top in the main.rs file.
 
 1.) https://github.com/tensor-programming/snake-tutorial <br>
-2.)  https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect)<br> 
+2.) https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect)<br> 
 3.) https://github.com/PistonDevelopers/piston<br>
 4.) https://www.youtube.com/watch?v=nQV7DKBqGdk (Under the Sea Background Music)<br>
 5.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)<br> 
 6.) https://www.fontsquirrel.com/fonts/list/popular(Main Menu Font)<br>
 7.) https://rustacean.net (Main Menu Image)<br>
 8.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)<br>
-10.)https://www.youtube.com/watch?v=0zG1ahKOXNg (Field theme background music)<br>
-11.)https://www.youtube.com/watch?v=bGFBL_FYF9o (Dungeon theme background music)<br>
+10.) https://www.youtube.com/watch?v=0zG1ahKOXNg (Field theme background music)<br>
+11.) https://www.youtube.com/watch?v=bGFBL_FYF9o (Dungeon theme background music)<br>
 
 ## Project Writeup
 
