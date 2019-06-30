@@ -31,7 +31,7 @@ $ brew install sdl2_mixer
 
 Building on Linux
 
-Same instructions as above but instead of installing sdl2 and sdl2_mixer, 
+Same instructions as above but instead of installing sdl2 and sdl2_mixer,<br> 
 the following should be installed instead: libsdl2-mixer-2.0-0 and libsdl2-mixer-dev
 
 ## How to run
@@ -48,12 +48,12 @@ Choose any of the options from the menu
 
 Use the arrow keys to change direction of the snake
 
-Apples - 1 point and snake grows one block
-Berries - 2 points and snake grows one block
-Orange - 0 point and snake is cut in half
+Apples - 1 point and snake grows one block<br>
+Berries - 2 points and snake grows one block<br>
+Orange - 0 point and snake is cut in half<br>
 
-Avoid hitting the walls or any obstacles. Your score is tracked in the top right corner.
-Your objective is to beat the high score which is saved to a text-file and overwritten if
+Avoid hitting the walls or any obstacles. Your score is tracked in the top right corner.<br>
+Your objective is to beat the high score which is saved to a text-file and overwritten if<br>
 that score is beaten.
 
 ## Sources
@@ -61,16 +61,16 @@ that score is beaten.
 Our main source for this project comes from tensor programming. We used this source code and built off of it and added a lot of features. 
 These features are commented at the top in the main.rs file.
 
-1.) https://github.com/tensor-programming/snake-tutorial 
-2.)  https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect) 
-3.) https://github.com/PistonDevelopers/piston
-4.) https://www.youtube.com/watch?v=nQV7DKBqGdk (Under the Sea Background Music)
-5.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect) 
-6.) https://www.fontsquirrel.com/fonts/list/popular(Main Menu Font)
-7.) https://rustacean.net (Main Menu Image)
-8.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)
-10.)https://www.youtube.com/watch?v=0zG1ahKOXNg (Field theme background music)
-11.)https://www.youtube.com/watch?v=bGFBL_FYF9o (Dungeon theme background music)
+1.) https://github.com/tensor-programming/snake-tutorial <br>
+2.)  https://www.youtube.com/watch?v=_oazUwpMpQg (Eat Sound Effect)<br> 
+3.) https://github.com/PistonDevelopers/piston<br>
+4.) https://www.youtube.com/watch?v=nQV7DKBqGdk (Under the Sea Background Music)<br>
+5.) https://www.youtube.com/watch?v=HoBa2SyvtpE (Die Sound Effect)<br> 
+6.) https://www.fontsquirrel.com/fonts/list/popular(Main Menu Font)<br>
+7.) https://rustacean.net (Main Menu Image)<br>
+8.) https://github.com/lislis/manzana-attack/blob/master/src/main.rs (score)<br>
+10.)https://www.youtube.com/watch?v=0zG1ahKOXNg (Field theme background music)<br>
+11.)https://www.youtube.com/watch?v=bGFBL_FYF9o (Dungeon theme background music)<br>
 
 ## Project Writeup
 
@@ -85,4 +85,8 @@ For this project, we added the following features:
         - A poison apple obstacle that appears when score >= 20 and score % 20 = 0, and disappears when score % 5 = 0 (and score % 20 != 0)
         - Two-player splitscreen mode
 
-These features were all implemented successfully. We also worked on better graphics for the game (turning snake into line of crabs), but didn't finish its implementation. Adding unit tests was also difficult to figure out given the game's structure. We learned about the process of working on a project using Rust, including the importance of research when planning to implement something unfamiliar.
+These features were all implemented successfully. We also worked on better graphics for <br>
+the game (turning snake into line of crabs), but didn't finish its implementation. <br>
+Adding unit tests was also difficult to figure out given the game's structure. We learned <br>
+about the process of working on a project using Rust, including the importance of research when <br>
+planning to implement something unfamiliar.
